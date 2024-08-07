@@ -34,8 +34,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public String login(String username, String password) {
-        //String username = getUsername(email);
+    public String login(String email, String password) {
+        String username = getUsername(email);
         var upAuth = new UsernamePasswordAuthenticationToken(username, password);
         var auth = authenticationManager.authenticate(upAuth);
 

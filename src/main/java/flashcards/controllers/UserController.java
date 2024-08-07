@@ -29,7 +29,7 @@ public class UserController {
         System.out.println("starting login");
         //System.out.println("email: " + request.getEmail());
         System.out.println("password: " + request.getPassword());
-        String token = userService.login(request.getUsername(),
+        String token = userService.login(request.getEmail(),
                 request.getPassword());
         return ResponseEntity.status(HttpStatus.OK).body(token);
     }
