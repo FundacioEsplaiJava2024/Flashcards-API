@@ -1,0 +1,9 @@
+#email config
+EMAIL_HOST: smtp.gmail.com
+EMAIL_PORT: 587
+EMAIL_ID : youremail
+EMAIL_PASSWORD: yourpasword
+VERIFY_EMAIL_HOST: http://localhost:8181
+
+#Server
+ACTIVE_PROFILE: dev
