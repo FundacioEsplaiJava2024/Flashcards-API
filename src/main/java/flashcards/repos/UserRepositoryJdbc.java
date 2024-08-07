@@ -33,4 +33,10 @@ public class UserRepositoryJdbc implements UserRepository{
                 ("select * from users where id=?", new Object[]{id},
                         new BeanPropertyRowMapper<User>(User.class)));
     }
+
+    public User findByEmail(String email) {
+        String selectByEmailQuery = "select username from users where email = ?";
+        User user = jdbcTemplate.queryForObject(selectByEmailQuery, BeanPropertyRowMapper.newInstance(User.class), email);
+        return user;
+    }
 }

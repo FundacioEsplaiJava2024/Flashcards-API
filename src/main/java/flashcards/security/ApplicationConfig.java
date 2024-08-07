@@ -22,7 +22,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByUsername(username);
+        return userRepository::findByUsername;
     }
 
     @Bean
