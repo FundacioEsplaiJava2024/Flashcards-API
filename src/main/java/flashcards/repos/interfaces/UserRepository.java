@@ -1,4 +1,4 @@
-package flashcards.repos;
+package flashcards.repos.interfaces;
 
 import flashcards.enteties.User;
 

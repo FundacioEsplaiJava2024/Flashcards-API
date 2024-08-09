@@ -1,6 +1,7 @@
 package flashcards.repos;
 
 import flashcards.enteties.User;
+import flashcards.repos.interfaces.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-public class UserRepositoryJdbc implements UserRepository{
+public class UserRepositoryJdbc implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
     @Override
     public User findByUsername(String username) {
