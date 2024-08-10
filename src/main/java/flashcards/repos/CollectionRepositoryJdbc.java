@@ -18,15 +18,16 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
 
     @Override
     public int addCollection(Collection collection) {
-        String insertQuery = "insert into collections" +
-                "(title, description, created_at, is_public, user_id) values (?,?,?,?,?)";
+        String insertQuery = "INSERT INTO collections" +
+                "(title, description, created_at, is_public, user_id) VALUES (?,?,?,?,?)";
         return jdbcTemplate.update(insertQuery,collection.getTitle()
                 ,collection.getDescription(),collection.getCreatedAt(), collection.isPublic(), collection.getUser().getId());
     }
 
     @Override
     public int deleteById(Integer id) {
-        return jdbcTemplate.update("DELETE FROM collections WHERE id=?", id);
+        String deleteQuery = "DELETE FROM collections WHERE id=?";
+        return jdbcTemplate.update(deleteQuery, id);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
 
     @Override
     public List<Collection> findAll(Integer user_id) {
-        String selectQuery = "SELECT * from collections WHERE user_id=?";
+        String selectQuery = "SELECT * FROM collections WHERE user_id=?";
         return jdbcTemplate.query(selectQuery, BeanPropertyRowMapper.newInstance(Collection.class), user_id );
 
     }
