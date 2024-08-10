@@ -1,6 +1,7 @@
 package flashcards.repos;
 
-import flashcards.enteties.Collection;
+import flashcards.entities.Collection;
+import flashcards.entities.User;
 import flashcards.repos.interfaces.CollectionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -18,7 +19,7 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
     @Override
     public int addCollection(Collection collection) {
         String insertQuery = "insert into collections" +
-                "(title, description, created_at, is_public,  user_id) values (?,?,?,?,?)";
+                "(title, description, created_at, is_public, user_id) values (?,?,?,?,?)";
         return jdbcTemplate.update(insertQuery,collection.getTitle()
                 ,collection.getDescription(),collection.getCreatedAt(), collection.isPublic(), collection.getUser().getId());
     }
@@ -30,18 +31,44 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
 
     @Override
     public Optional<Collection> findById(Integer id) {
-        String selectQuery = "select * from collections where id=?";
-        return Optional.of(jdbcTemplate.queryForObject(selectQuery, BeanPropertyRowMapper.newInstance(Collection.class), id));
+            String query = "SELECT c.id AS collection_id, c.title, c.description, c.created_at, c.is_public, " +
+                    "u.id AS user_id, u.username, u.email " +
+                    "FROM collections c " +
+                    "JOIN users u ON c.user_id = u.id " +
+                    "WHERE c.id = ?";
 
-    }
+            return Optional.ofNullable(jdbcTemplate.queryForObject(query, new Object[]{id}, (rs, rowNum) -> {
+
+                User user = new User();
+                user.setId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+
+
+                Collection collection = new Collection();
+                collection.setId(rs.getInt("collection_id"));
+                collection.setTitle(rs.getString("title"));
+                collection.setDescription(rs.getString("description"));
+                collection.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                collection.setPublic(rs.getBoolean("is_public"));
+                collection.setUser(user);
+                return collection;
+            }));
+        }
+
+
 
     @Override
-    public int updateCollection(Collection collection) {
+    public Optional<Collection> updateCollection(Collection collection, Integer id) {
+        String updateQuery = "UPDATE collections SET title=?, description=?, is_public=? WHERE id=?";
 
-        String updateQuery= "UPDATE collections SET id=?, title=?, description=?, created_at=?, is_public=? user_id=?  WHERE id=?";
 
-        return jdbcTemplate.update(updateQuery,
-                collection.getTitle(),collection.getDescription(), collection.getCreatedAt(), collection.isPublic(), collection.getUser().getId(), collection.getId());
+        jdbcTemplate.update(updateQuery,
+                collection.getTitle(),
+                collection.getDescription(),
+                collection.isPublic(),
+                id);
+        return findById(id);
     }
 
 

@@ -1,7 +1,5 @@
-package flashcards.enteties;
+package flashcards.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +10,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,6 +39,7 @@ public class Collection {
     @JsonProperty("user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+
 
     /*@JsonIgnore
     @OneToMany(mappedBy = "collection")

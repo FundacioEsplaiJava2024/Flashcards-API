@@ -5,11 +5,11 @@ spring:
     username: root
     url: jdbc:mysql://localhost:3306/flashcards
     password: root
+    initialization-mode: always
+    schema: classpath:schema.sql
   jpa:
-    generate-ddl: 'true'
     hibernate:
-      ddl-auto: create
-    show-sql: 'true'
+      ddl-auto: none
   mail:
     host: ${EMAIL_HOST}
     port: ${EMAIL_PORT}
@@ -31,7 +31,7 @@ spring:
     verify:
       host: ${VERIFY_EMAIL_HOST}
 server:
-  port: '8181'
+  port: '8182'
 
 token:
   secret.key: '8472B4B6250655367566B5970337336763979244226452948404D635166546A'

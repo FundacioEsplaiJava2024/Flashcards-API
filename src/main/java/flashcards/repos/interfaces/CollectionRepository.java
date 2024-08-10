@@ -1,9 +1,6 @@
 package flashcards.repos.interfaces;
 
-import flashcards.enteties.Collection;
-import lombok.AllArgsConstructor;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+import flashcards.entities.Collection;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +13,7 @@ public interface CollectionRepository {
 
     Optional<Collection> findById(Integer id);
 
-    int updateCollection(Collection collection);
+    Optional<Collection> updateCollection(Collection collection, Integer id);
 
     List<Collection> findAll(Integer user_id);
 }

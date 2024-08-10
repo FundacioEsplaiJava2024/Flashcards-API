@@ -1,6 +1,6 @@
 package flashcards.repos.interfaces;
 
-import flashcards.enteties.User;
+import flashcards.entities.User;
 
 import java.util.Optional;
 
