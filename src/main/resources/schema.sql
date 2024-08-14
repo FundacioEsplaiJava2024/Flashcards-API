@@ -4,13 +4,14 @@ CREATE SCHEMA IF NOT EXISTS flashcards DEFAULT CHARACTER SET utf8mb4;
 USE flashcards;
 
 -- Table structure for table users
+
 DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
    id int NOT NULL AUTO_INCREMENT,
    username varchar(20) UNIQUE NOT NULL,
    email varchar(60) UNIQUE NOT NULL,
    password varchar(250) NOT NULL,
-   register_date date,
+   register_date datetime,
    is_enabled BIT(1),
    PRIMARY KEY (id)
 );
