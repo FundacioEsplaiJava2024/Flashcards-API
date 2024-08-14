@@ -1,7 +1,6 @@
 package flashcards.repos;
 
 import flashcards.entities.Card;
-import flashcards.entities.Collection;
 import flashcards.entities.User;
 import flashcards.repos.interfaces.CardRepository;
 import lombok.AllArgsConstructor;
@@ -36,11 +35,9 @@ public class CardRepositoryJdbc implements CardRepository {
     @Override
     public Optional<Card> findById(Integer card_id) {
         String query = "SELECT c.id AS card_id, c.front, c.backside, c.created_at, c.is_favourite, " +
-                "u.id AS user_id, u.username, u.email, " +
-                "col.id AS collection_id, col.title AS collection_title, " +
+                "u.id AS user_id, u.username, u.email " +
                 "FROM cards c " +
                 "JOIN users u ON c.user_id = u.id " +
-                "JOIN collections col ON c.collection_id = col.id " +
                 "WHERE c.id = ?";
 
         return Optional.ofNullable(jdbcTemplate.queryForObject(query, new Object[]{card_id}, (rs, rowNum) -> {
@@ -50,9 +47,10 @@ public class CardRepositoryJdbc implements CardRepository {
             user.setUsername(rs.getString("username"));
             user.setEmail(rs.getString("email"));
 
+            /*
             Collection collection = new Collection();
             collection.setId(rs.getInt("collection_id"));
-            collection.setTitle(rs.getString("collection_title"));
+            collection.setTitle(rs.getString("collection_title"));*/
 
             Card card = new Card();
             card.setId(rs.getInt("card_id"));
@@ -60,7 +58,7 @@ public class CardRepositoryJdbc implements CardRepository {
             card.setBackside(rs.getString("backside"));
             card.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
             card.setFavourite(rs.getBoolean("is_favourite"));
-            card.setCollection(collection);
+            //card.setCollection(collection);
             card.setUser(user);
 
             return card;
