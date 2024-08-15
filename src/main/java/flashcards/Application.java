@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
+	//implements CommandLineRunner
 	private final DataSource dataSource;
 
 	public Application(DataSource dataSource) {
@@ -26,3 +27,4 @@ public class Application implements CommandLineRunner {
 	}
 
 }
+

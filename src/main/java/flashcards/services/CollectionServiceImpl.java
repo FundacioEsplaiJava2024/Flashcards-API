@@ -68,8 +68,6 @@ public class CollectionServiceImpl implements CollectionService {
         if(!collectionOpt.isPresent()){
             //throw an exception if the collection wasn't found
         }
-        // collectionOpt.get() is the class Collection
-        collectionOpt.get().setUser(loggerUser);
             Optional<Collection> updatedCollection = collectionOpt;
             //to change title and description
             // do in case description and title aren't null and description and title aren't blank
