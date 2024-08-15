@@ -1,6 +1,7 @@
 package flashcards.repos;
 
-import flashcards.enteties.User;
+import flashcards.entities.User;
+import flashcards.repos.interfaces.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,11 +11,11 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-public class UserRepositoryJdbc implements UserRepository{
+public class UserRepositoryJdbc implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
     @Override
     public User findByUsername(String username) {
-        String selectByUsernameQuery = "select id, username, password, register_date from users where username = ?";
+        String selectByUsernameQuery = "select * from users where username = ?";
         User user = jdbcTemplate.queryForObject(selectByUsernameQuery, BeanPropertyRowMapper.newInstance(User.class), username);
         return user;
     }
@@ -22,7 +23,7 @@ public class UserRepositoryJdbc implements UserRepository{
     @Override
     public int addUser(User user) {
         String insertQuery = "insert into users" +
-                "(username, email, password, register_date, enabled) values (?,?,?,?,?)";
+                "(username, email, password, register_date, is_enabled) values (?,?,?,?,?)";
         return jdbcTemplate.update(insertQuery,user.getUsername(),user.getEmail(), user.getPassword(), user.getRegisterDate(), user.isEnabled());
     }
 

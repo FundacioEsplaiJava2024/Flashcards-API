@@ -1,4 +1,4 @@
-package flashcards.requests;
+package flashcards.requests.userRequests;
 
 import lombok.Data;
 
