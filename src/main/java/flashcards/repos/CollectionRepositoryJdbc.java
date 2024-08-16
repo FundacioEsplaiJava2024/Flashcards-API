@@ -1,5 +1,6 @@
 package flashcards.repos;
 
+import flashcards.entities.Card;
 import flashcards.entities.CardCollection;
 import flashcards.entities.User;
 import flashcards.repos.interfaces.CollectionRepository;
@@ -28,6 +29,16 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
     public int deleteById(Integer id) {
         String deleteQuery = "DELETE FROM collections WHERE id=?";
         return jdbcTemplate.update(deleteQuery, id);
+    }
+
+    @Override
+    public Optional<CardCollection> changePublicStatus(Integer id, CardCollection cardCollection) {
+        String updateQuery = "UPDATE collections SET is_public=? WHERE id=?";
+
+        jdbcTemplate.update(updateQuery,
+                cardCollection.isPublic(),
+                id);
+        return findById(id);
     }
 
     @Override
@@ -61,13 +72,12 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
 
     @Override
     public Optional<CardCollection> updateCollection(CardCollection cardCollection, Integer id) {
-        String updateQuery = "UPDATE collections SET title=?, description=?, is_public=? WHERE id=?";
+        String updateQuery = "UPDATE collections SET title=?, description=? WHERE id=?";
 
 
         jdbcTemplate.update(updateQuery,
                 cardCollection.getTitle(),
                 cardCollection.getDescription(),
-                cardCollection.isPublic(),
                 id);
         return findById(id);
     }
@@ -75,8 +85,31 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
 
     @Override
     public List<CardCollection> findAll(Integer user_id) {
-        String selectQuery = "SELECT * FROM collections WHERE user_id=?";
-        return jdbcTemplate.query(selectQuery, BeanPropertyRowMapper.newInstance(CardCollection.class), user_id );
+        String query = "SELECT col.id AS collection_id, col.title, col.description, col.created_at, col.is_public, col.user_id, " +
+                "u.id AS user_id, u.username " +
+                "FROM collections col " +
+                "JOIN users u ON col.user_id = u.id " +
+                "WHERE col.user_id = ?";
 
+        return jdbcTemplate.query(query, new Object[]{user_id}, (rs, rowNum) -> {
+
+            User user = User.builder()
+                    .id(rs.getInt("user_id"))
+                    .username(rs.getString("username"))
+                    .build();
+
+
+            CardCollection cardCollection = CardCollection.builder()
+                    .id(rs.getInt("collection_id"))
+                    .title(rs.getString("title"))  // corrected to use alias directly
+                    .description(rs.getString("description")) // corrected to use alias directly
+                    .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                    .isPublic(rs.getBoolean("is_public"))
+                    .user(user)
+                    .build();
+
+            return cardCollection;
+        });
     }
 }
+

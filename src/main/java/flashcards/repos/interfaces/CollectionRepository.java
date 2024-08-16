@@ -11,6 +11,8 @@ public interface CollectionRepository {
 
     int deleteById(Integer id);
 
+    Optional<CardCollection> changePublicStatus(Integer id, CardCollection cardCollection);
+
     Optional<CardCollection> findById(Integer id);
 
     Optional<CardCollection> updateCollection(CardCollection cardCollection, Integer id);

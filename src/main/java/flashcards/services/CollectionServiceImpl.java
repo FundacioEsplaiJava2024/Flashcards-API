@@ -2,7 +2,9 @@ package flashcards.services;
 
 import flashcards.entities.CardCollection;
 import flashcards.entities.User;
+import flashcards.mapper.CardCollectionMapper;
 import flashcards.repos.interfaces.CollectionRepository;
+import flashcards.responses.CardCollectionResponse;
 import flashcards.services.interfaces.CollectionService;
 import flashcards.services.interfaces.UserService;
 import lombok.AllArgsConstructor;
@@ -20,7 +22,7 @@ public class CollectionServiceImpl implements CollectionService {
 
 
     @Override
-    public CardCollection createCollection(String title, String description, boolean isPublic){
+    public CardCollectionResponse createCollection(String title, String description, boolean isPublic){
         // get current logged user
         User loggedUser = userService.getLoggedUser();
 
@@ -31,19 +33,22 @@ public class CollectionServiceImpl implements CollectionService {
                 .createdAt(LocalDateTime.now())
                 .user(loggedUser)
                 .build();
-         collectionRepository.addCollection(cardCollection);
-         return cardCollection;
+        collectionRepository.addCollection(cardCollection);
+
+        return CardCollectionMapper.toResponse(cardCollection);
+
     }
 
+    //not implemented until email verification
     // creating a 'default' cardCollection for all those cards that doesn't have any specified cardCollection
     @Override
-    public void createDefaultCollection(){
-       User loggedUser = userService.getLoggedUser();
+    public void createDefaultCollection(String username){
+       User thisUser =  userService.getUserByUsername(username);
        CardCollection defaultCardCollection = CardCollection.builder()
                .title("Default")
                .createdAt(LocalDateTime.now())
                .isPublic(false)
-               .user(loggedUser)
+               .user(thisUser)
                .build();
         collectionRepository.addCollection(defaultCardCollection);
 
@@ -52,18 +57,23 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     public void deleteById(Integer id){
         Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
-        if(!collectionOpt.isPresent()){
-            //throw an exception
+        if(collectionOpt.get().getUser() == userService.getLoggedUser()) {
+            //throws an exception
         }
-       // if(collectionOpt.get().getUser().getId() == userService.getLoggedUser().getId()){
+        if (!collectionOpt.isPresent()) {
+            //throws an exception
+        }
             collectionRepository.deleteById(id);
-       // }
+
     }
 
     @Override
-    public CardCollection updateCollection(Integer id, String title, String description, boolean isPublic) {
+    public CardCollectionResponse updateCollection(Integer id, String title, String description) {
         //find cardCollection with the id, Optional because it can be null.
         Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
+        if(collectionOpt.get().getUser() == userService.getLoggedUser()) {
+            //throws an exception
+        }
         User loggerUser = userService.getLoggedUser();
         if(!collectionOpt.isPresent()){
             //throw an exception if the cardCollection wasn't found
@@ -92,28 +102,64 @@ public class CollectionServiceImpl implements CollectionService {
             }
             //exception when the title is null
 
-        return updatedCollection.get();
+        return CardCollectionMapper.toResponse(updatedCollection.get());
 
     }
 
     @Override
-    public CardCollection getCollectionById(Integer id){
+    public CardCollectionResponse getCollectionById(Integer id){
 
         Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
 
         if(collectionOpt.get().getUser() == userService.getLoggedUser()) {
-            if (!collectionOpt.isPresent()) {
-                //throws an exception
-            }
-
+            //throws an exception
         }
+        if (!collectionOpt.isPresent()) {
+            //throws an exception
+        }
+        return CardCollectionMapper.toResponse(collectionOpt.get());
+    }
+
+    @Override
+    public List<CardCollectionResponse> getAllCollections(){
+        User loggedUser = userService.getLoggedUser();
+        List<CardCollection> collections = collectionRepository.findAll(loggedUser.getId());
+        return CardCollectionMapper.toResponseList(collections);
+    }
+
+
+    @Override
+    public CardCollection getCollectionByIdForCards(Integer id){
+
+        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
+
+        if(collectionOpt.get().getUser() == userService.getLoggedUser()) {
+            //throws an exception
+        }
+        if (!collectionOpt.isPresent()) {
+            //throws an exception
+        }
+
+
         return collectionOpt.get();
     }
 
     @Override
-    public List<CardCollection> getAllCollections(){
-        User loggedUser = userService.getLoggedUser();
-        return collectionRepository.findAll(loggedUser.getId());
+    public CardCollectionResponse changePublicStatus(Integer id, boolean isPublic){
+
+        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
+        if(collectionOpt.get().getUser() == userService.getLoggedUser()) {
+            //throws an exception
+        }
+        if (!collectionOpt.isPresent()) {
+            //throws an exception
+        }
+        collectionOpt.get().setPublic(isPublic);
+
+        Optional<CardCollection> cardCollection = collectionRepository.changePublicStatus(id, collectionOpt.get());
+
+        return CardCollectionMapper.toResponse(cardCollection.get());
+
     }
 
     /*
