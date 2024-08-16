@@ -2,8 +2,6 @@ package flashcards.services;
 
 import flashcards.entities.User;
 import flashcards.repos.interfaces.UserRepository;
-import flashcards.responses.TokenResponse;
-import flashcards.responses.UserRegisterResponse;
 import flashcards.security.JwtService;
 import flashcards.services.interfaces.UserService;
 import lombok.AllArgsConstructor;
@@ -26,7 +24,7 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public UserRegisterResponse createUser(String username, String email, String password) {
+    public User createUser(String username, String email, String password) {
         User user = User.builder()
                 .username(username)
                 .email(email)
@@ -35,27 +33,17 @@ public class UserServiceImpl implements UserService {
                 .enabled(false)
                 .build();
         userRepository.addUser(user);
-
-        UserRegisterResponse response = UserRegisterResponse.builder()
-                .id(getUserById(username).getId())
-                .username(username)
-                .email(email)
-                .register_date(user.getRegisterDate())
-                .build();
-        return response;
-
-
+        return user;
     }
 
     @Override
-    public TokenResponse login(String email, String password) {
+    public String login(String email, String password) {
         String username = getUsername(email);
         var upAuth = new UsernamePasswordAuthenticationToken(username, password);
         var auth = authenticationManager.authenticate(upAuth);
 
         var jwtToken = jwtService.generateToken((User) auth.getPrincipal());
-        TokenResponse token = new TokenResponse(jwtToken);
-        return token;
+        return jwtToken;
     }
 
     private String getUsername(String email){
@@ -69,10 +57,5 @@ public class UserServiceImpl implements UserService {
         String username = auth.getName();
         User loggedUser = userRepository.findByUsername(username);
         return loggedUser;
-    }
-
-    private User getUserById(String username){
-        User user =  userRepository.findByUsername(username);
-        return user;
     }
 }

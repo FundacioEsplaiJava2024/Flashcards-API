@@ -16,32 +16,35 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Entity
-@Table(name = "cards")
-public class Card {
+@Table(name = "collections")
+public class Collection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Column(nullable = false, name = "front")
-    private String front;
+    @Column(nullable = false, name = "title")
+    private String title;
 
-    @Column(name = "backside")
-    private String backside;
+    @Column(name = "description")
+    private String description;
 
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "isFavourite")
-    private boolean favourite;
-
-    @ManyToOne
-    @JsonProperty("collection_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Collection collection;
+    @Column(nullable = false, name = "is_public")
+    private boolean isPublic;
 
     @ManyToOne
     @JsonProperty("user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+
+
+    /*@JsonIgnore
+    @OneToMany(mappedBy = "collection")
+    @JsonIdentityReference(alwaysAsId = true)
+    private List<Card> cards;*/
+
+
 }

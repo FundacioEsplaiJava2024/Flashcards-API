@@ -49,7 +49,7 @@ public class CardController {
         return ResponseEntity.status(HttpStatus.OK).body(cardService.getAllCards());
     }
 
-    @GetMapping("/cardCollection/{collection_id}")
+    @GetMapping("/collection/{collection_id}")
     public ResponseEntity<?> getAllCardsByCollection(@PathVariable Integer collection_id){
         return ResponseEntity.status(HttpStatus.OK).body(cardService.getAllCardsByCollection(collection_id));
     }

@@ -1,7 +1,7 @@
 package flashcards.services;
 
 import flashcards.entities.Card;
-import flashcards.entities.CardCollection;
+import flashcards.entities.Collection;
 import flashcards.entities.User;
 import flashcards.repos.interfaces.CardRepository;
 import flashcards.services.interfaces.CardService;
@@ -24,14 +24,14 @@ public class CardServiceImpl implements CardService {
     @Override
     public Card addCard(String front, String backside, Integer collection_id) {
         User loggedUser = userService.getLoggedUser();
-        CardCollection cardCollection = collectionService.getCollectionById(collection_id);
+        Collection collection = collectionService.getCollectionById(collection_id);
 
         Card card = Card.builder()
                 .front(front)
                 .backside(backside)
                 .createdAt(LocalDateTime.now())
                 .favourite(false)
-                .cardCollection(cardCollection)
+                .collection(collection)
                 .user(loggedUser)
                 .build();
 

@@ -1,20 +1,20 @@
 package flashcards.services.interfaces;
 
-import flashcards.entities.CardCollection;
+import flashcards.entities.Collection;
 
 import java.util.List;
 
 public interface CollectionService {
-    CardCollection createCollection(String title, String description, boolean isPublic);
+    Collection createCollection(String title, String description, boolean isPublic);
 
-    // creating a 'default' cardCollection for all those cards that doesn't have any specified cardCollection
+    // creating a 'default' collection for all those cards that doesn't have any specified collection
     void createDefaultCollection();
 
     void deleteById(Integer id);
 
-    CardCollection updateCollection(Integer id, String title, String description, boolean isPublic);
+    Collection updateCollection(Integer id, String title, String description, boolean isPublic);
 
-    CardCollection getCollectionById(Integer id);
+    Collection getCollectionById(Integer id);
 
-    List<CardCollection> getAllCollections();
+    List<Collection> getAllCollections();
 }

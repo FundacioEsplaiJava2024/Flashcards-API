@@ -1,6 +1,6 @@
 package flashcards.controllers;
 
-import flashcards.entities.CardCollection;
+import flashcards.entities.Collection;
 
 import flashcards.requests.collectionRequests.CreateCollectionRequest;
 import flashcards.requests.collectionRequests.UpdateCollectionRequest;
@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/flashcards/cardCollection")
+@RequestMapping("/flashcards/collection")
 @CrossOrigin("*")
 @AllArgsConstructor
 public class CollectionController {
@@ -20,23 +20,23 @@ public class CollectionController {
     @PostMapping("")
     public ResponseEntity<?> addCollection(@RequestBody CreateCollectionRequest request){
 
-        CardCollection cardCollection = collectionService.createCollection(request.getTitle(),
+        Collection collection = collectionService.createCollection(request.getTitle(),
                 request.getDescription(), request.isPublic());
-        return ResponseEntity.status(HttpStatus.CREATED).body(cardCollection);
+        return ResponseEntity.status(HttpStatus.CREATED).body(collection);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCollection(@PathVariable Integer id){
         collectionService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("CardCollection deleted");
+        return ResponseEntity.status(HttpStatus.OK).body("Collection deleted");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editCollection(@PathVariable Integer id, @RequestBody UpdateCollectionRequest request){
 
-        CardCollection cardCollection = collectionService.updateCollection(id, request.getTitle(),
+        Collection collection = collectionService.updateCollection(id, request.getTitle(),
                 request.getDescription(), request.isPublic());
-        return ResponseEntity.status(HttpStatus.OK).body(cardCollection);
+        return ResponseEntity.status(HttpStatus.OK).body(collection);
     }
 
     @GetMapping("/{id}")

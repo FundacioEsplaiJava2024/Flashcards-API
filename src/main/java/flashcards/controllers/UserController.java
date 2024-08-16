@@ -2,8 +2,6 @@ package flashcards.controllers;
 
 import flashcards.requests.userRequests.LoginRequest;
 import flashcards.requests.userRequests.RegisterRequest;
-import flashcards.responses.TokenResponse;
-import flashcards.responses.UserRegisterResponse;
 import flashcards.services.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,16 +18,15 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
 
-        UserRegisterResponse response = userService.createUser(request.getUsername(),
-                request.getEmail(), request.getPassword());
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request.getUsername(),
+                    request.getEmail(), request.getPassword()));
 
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request){
 
-        TokenResponse token = userService.login(request.getEmail(),
+        String token = userService.login(request.getEmail(),
                 request.getPassword());
         return ResponseEntity.status(HttpStatus.OK).body(token);
     }

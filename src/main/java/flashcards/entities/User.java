@@ -18,24 +18,30 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-
+@Entity
+@Table(name = "users")
 public class User implements UserDetails {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
+    @Column(nullable = false, unique = true, name = "username")
     private String username;
 
+    @Column(nullable = false, name = "password")
     private String password;
 
+    @Column(nullable = false, unique = true, name = "email")
     private String email;
 
+    @Column(name = "register_date")
     private LocalDateTime registerDate;
 
     @JsonIgnore
-    private List<CardCollection> cardCollections;
+    @OneToMany(mappedBy = "user")
+    private List<flashcards.entities.Collection> collections;
 
-    //until user hasn't verified its email, enable remains true.
-    //for now this option is not available, so enable is true by default
     private boolean enabled;
 
     @Override
