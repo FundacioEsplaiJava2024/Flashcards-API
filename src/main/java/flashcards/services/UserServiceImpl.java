@@ -1,6 +1,7 @@
 package flashcards.services;
 
 import flashcards.entities.User;
+import flashcards.mapper.UserMapper;
 import flashcards.repos.interfaces.UserRepository;
 import flashcards.responses.TokenResponse;
 import flashcards.responses.UserRegisterResponse;
@@ -36,14 +37,7 @@ public class UserServiceImpl implements UserService {
                 .build();
         userRepository.addUser(user);
 
-        UserRegisterResponse response = UserRegisterResponse.builder()
-                .id(getUserById(username).getId())
-                .username(username)
-                .email(email)
-                .register_date(user.getRegisterDate())
-                .build();
-        return response;
-
+        return UserMapper.toResponse(user);
 
     }
 
@@ -71,7 +65,8 @@ public class UserServiceImpl implements UserService {
         return loggedUser;
     }
 
-    private User getUserById(String username){
+    @Override
+    public User getUserByUsername(String username){
         User user =  userRepository.findByUsername(username);
         return user;
     }

@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class UserRegisterResponse {
-    private Integer id;
     private String username;
     private String email;
     private LocalDateTime register_date;

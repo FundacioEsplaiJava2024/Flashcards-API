@@ -10,4 +10,6 @@ public interface UserService {
     TokenResponse login(String email, String password);
 
     User getLoggedUser();
+
+    User getUserByUsername(String username);
 }
