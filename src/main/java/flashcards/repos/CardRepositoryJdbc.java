@@ -1,7 +1,7 @@
 package flashcards.repos;
 
 import flashcards.entities.Card;
-import flashcards.entities.Collection;
+import flashcards.entities.CardCollection;
 import flashcards.entities.User;
 import flashcards.repos.interfaces.CardRepository;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class CardRepositoryJdbc implements CardRepository {
         String insertQuery = "INSERT INTO cards" +
                 "(front, backside, created_at, is_favourite, collection_id, user_id) VALUES (?,?,?,?,?,?)";
         return jdbcTemplate.update(insertQuery, card.getFront(), card.getBackside(), card.getCreatedAt(),
-                            card.isFavourite(), card.getCollection().getId(), card.getUser().getId());
+                            card.isFavourite(), card.getCardCollection().getId(), card.getUser().getId());
     }
 
     @Override
@@ -51,9 +51,9 @@ public class CardRepositoryJdbc implements CardRepository {
 
 
 
-            Collection collection = new Collection();
-            collection.setId(rs.getInt("collection_id"));
-            collection.setTitle(rs.getString("collection_title"));
+            CardCollection cardCollection = new CardCollection();
+            cardCollection.setId(rs.getInt("collection_id"));
+            cardCollection.setTitle(rs.getString("collection_title"));
 
             Card card = new Card();
             card.setId(rs.getInt("card_id"));
@@ -61,7 +61,7 @@ public class CardRepositoryJdbc implements CardRepository {
             card.setBackside(rs.getString("backside"));
             card.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
             card.setFavourite(rs.getBoolean("is_favourite"));
-            card.setCollection(collection);
+            card.setCardCollection(cardCollection);
             card.setUser(user);
 
             return card;

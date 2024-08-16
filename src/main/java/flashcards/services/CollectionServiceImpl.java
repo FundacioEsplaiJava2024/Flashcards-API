@@ -1,6 +1,6 @@
 package flashcards.services;
 
-import flashcards.entities.Collection;
+import flashcards.entities.CardCollection;
 import flashcards.entities.User;
 import flashcards.repos.interfaces.CollectionRepository;
 import flashcards.services.interfaces.CollectionService;
@@ -20,38 +20,38 @@ public class CollectionServiceImpl implements CollectionService {
 
 
     @Override
-    public Collection createCollection(String title, String description, boolean isPublic){
+    public CardCollection createCollection(String title, String description, boolean isPublic){
         // get current logged user
         User loggedUser = userService.getLoggedUser();
 
-        Collection collection  = Collection.builder()
+        CardCollection cardCollection = CardCollection.builder()
                 .title(title)
                 .description(description)
                 .isPublic(isPublic)
                 .createdAt(LocalDateTime.now())
                 .user(loggedUser)
                 .build();
-         collectionRepository.addCollection(collection);
-         return collection;
+         collectionRepository.addCollection(cardCollection);
+         return cardCollection;
     }
 
-    // creating a 'default' collection for all those cards that doesn't have any specified collection
+    // creating a 'default' cardCollection for all those cards that doesn't have any specified cardCollection
     @Override
     public void createDefaultCollection(){
        User loggedUser = userService.getLoggedUser();
-       Collection defaultCollection = Collection.builder()
+       CardCollection defaultCardCollection = CardCollection.builder()
                .title("Default")
                .createdAt(LocalDateTime.now())
                .isPublic(false)
                .user(loggedUser)
                .build();
-        collectionRepository.addCollection(defaultCollection);
+        collectionRepository.addCollection(defaultCardCollection);
 
     }
 
     @Override
     public void deleteById(Integer id){
-        Optional<Collection> collectionOpt = collectionRepository.findById(id);
+        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
         if(!collectionOpt.isPresent()){
             //throw an exception
         }
@@ -61,14 +61,14 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public Collection updateCollection(Integer id, String title, String description, boolean isPublic) {
-        //find collection with the id, Optional because it can be null.
-        Optional<Collection> collectionOpt = collectionRepository.findById(id);
+    public CardCollection updateCollection(Integer id, String title, String description, boolean isPublic) {
+        //find cardCollection with the id, Optional because it can be null.
+        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
         User loggerUser = userService.getLoggedUser();
         if(!collectionOpt.isPresent()){
-            //throw an exception if the collection wasn't found
+            //throw an exception if the cardCollection wasn't found
         }
-            Optional<Collection> updatedCollection = collectionOpt;
+            Optional<CardCollection> updatedCollection = collectionOpt;
             //to change title and description
             // do in case description and title aren't null and description and title aren't blank
             if(description != null && title != null && !description.trim().isEmpty() && !title.trim().isEmpty()) {
@@ -97,9 +97,9 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public Collection getCollectionById(Integer id){
+    public CardCollection getCollectionById(Integer id){
 
-        Optional<Collection> collectionOpt = collectionRepository.findById(id);
+        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
 
         if(collectionOpt.get().getUser() == userService.getLoggedUser()) {
             if (!collectionOpt.isPresent()) {
@@ -111,7 +111,7 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public List<Collection> getAllCollections(){
+    public List<CardCollection> getAllCollections(){
         User loggedUser = userService.getLoggedUser();
         return collectionRepository.findAll(loggedUser.getId());
     }
@@ -119,7 +119,7 @@ public class CollectionServiceImpl implements CollectionService {
     /*
     @Override
     public List<Card> getAllCardsByCollection(Integer id){
-        Optional<Collection> collectionOpt = collectionRepository.findById(id);
+        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
 
         List<Card> cardsByCollection = null;
         if(collectionOpt.get().getUser() == userService.getLoggedUser()){

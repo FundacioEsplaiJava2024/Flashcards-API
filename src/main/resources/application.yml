@@ -7,9 +7,9 @@ spring:
     password: root
     initialization-mode: always
     schema: classpath:schema.sql
-  jpa:
-    hibernate:
-      ddl-auto: none
+  sql:
+    init:
+      mode: always
   mail:
     host: ${EMAIL_HOST}
     port: ${EMAIL_PORT}

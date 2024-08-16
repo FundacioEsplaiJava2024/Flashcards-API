@@ -1,6 +1,6 @@
 package flashcards.repos;
 
-import flashcards.entities.Collection;
+import flashcards.entities.CardCollection;
 import flashcards.entities.User;
 import flashcards.repos.interfaces.CollectionRepository;
 import lombok.AllArgsConstructor;
@@ -17,11 +17,11 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public int addCollection(Collection collection) {
+    public int addCollection(CardCollection cardCollection) {
         String insertQuery = "INSERT INTO collections" +
                 "(title, description, created_at, is_public, user_id) VALUES (?,?,?,?,?)";
-        return jdbcTemplate.update(insertQuery,collection.getTitle()
-                ,collection.getDescription(),collection.getCreatedAt(), collection.isPublic(), collection.getUser().getId());
+        return jdbcTemplate.update(insertQuery, cardCollection.getTitle()
+                , cardCollection.getDescription(), cardCollection.getCreatedAt(), cardCollection.isPublic(), cardCollection.getUser().getId());
     }
 
     @Override
@@ -31,7 +31,7 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
     }
 
     @Override
-    public Optional<Collection> findById(Integer id) {
+    public Optional<CardCollection> findById(Integer id) {
             String query = "SELECT c.id AS collection_id, c.title, c.description, c.created_at, c.is_public, " +
                     "u.id AS user_id, u.username, u.email " +
                     "FROM collections c " +
@@ -46,37 +46,37 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
                 user.setEmail(rs.getString("email"));
 
 
-                Collection collection = new Collection();
-                collection.setId(rs.getInt("collection_id"));
-                collection.setTitle(rs.getString("title"));
-                collection.setDescription(rs.getString("description"));
-                collection.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                collection.setPublic(rs.getBoolean("is_public"));
-                collection.setUser(user);
-                return collection;
+                CardCollection cardCollection = new CardCollection();
+                cardCollection.setId(rs.getInt("collection_id"));
+                cardCollection.setTitle(rs.getString("title"));
+                cardCollection.setDescription(rs.getString("description"));
+                cardCollection.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                cardCollection.setPublic(rs.getBoolean("is_public"));
+                cardCollection.setUser(user);
+                return cardCollection;
             }));
         }
 
 
 
     @Override
-    public Optional<Collection> updateCollection(Collection collection, Integer id) {
+    public Optional<CardCollection> updateCollection(CardCollection cardCollection, Integer id) {
         String updateQuery = "UPDATE collections SET title=?, description=?, is_public=? WHERE id=?";
 
 
         jdbcTemplate.update(updateQuery,
-                collection.getTitle(),
-                collection.getDescription(),
-                collection.isPublic(),
+                cardCollection.getTitle(),
+                cardCollection.getDescription(),
+                cardCollection.isPublic(),
                 id);
         return findById(id);
     }
 
 
     @Override
-    public List<Collection> findAll(Integer user_id) {
+    public List<CardCollection> findAll(Integer user_id) {
         String selectQuery = "SELECT * FROM collections WHERE user_id=?";
-        return jdbcTemplate.query(selectQuery, BeanPropertyRowMapper.newInstance(Collection.class), user_id );
+        return jdbcTemplate.query(selectQuery, BeanPropertyRowMapper.newInstance(CardCollection.class), user_id );
 
     }
 }
