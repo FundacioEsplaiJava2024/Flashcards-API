@@ -17,4 +17,9 @@ public interface CardRepository {
     List<Card> findAll(Integer user_id);
 
     List<Card> findAllByCollection(Integer collection_id);
+
+    Optional<Card> changeFavourite(boolean is_favourite, Integer id);
+    List<Card> getRandomCards();
+
+    List<Card> findAllFavourite(Integer user_id);
 }

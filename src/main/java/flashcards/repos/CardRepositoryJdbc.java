@@ -89,7 +89,122 @@ public class CardRepositoryJdbc implements CardRepository {
 
     @Override
     public List<Card> findAllByCollection(Integer collection_id) {
-        String selectQuery = "SELECT * FROM cards WHERE collection_id=?";
-        return jdbcTemplate.query(selectQuery, BeanPropertyRowMapper.newInstance(Card.class), collection_id );
+        String selectQuery = "SELECT c.id AS card_id, c.front, c.backside, c.created_at, c.is_favourite, \n" +
+                "                col.id AS collection_id, col.title AS collection_title,\n" +
+                "                u.id AS user_id, u.username\n" +
+                "                FROM cards c \n" +
+                "                JOIN collections col ON c.collection_id = col.id \n" +
+                "                JOIN users u ON c.user_id = u.id \n" +
+                "                WHERE c.id = ?";
+
+        return jdbcTemplate.query(selectQuery, (rs, rowNum) -> {
+            // Mapping each row to a Card object
+
+            User user = User.builder()
+                    .id(rs.getInt("user_id"))
+                    .username(rs.getString("username"))
+                    .build();
+
+            CardCollection cardCollection = CardCollection.builder()
+                    .id(rs.getInt("collection_id"))
+                    .title(rs.getString("collection_title"))
+                    .build();
+
+            Card card = new Card();
+            card.setId(rs.getInt("card_id"));
+            card.setFront(rs.getString("front"));
+            card.setBackside(rs.getString("backside"));
+            card.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            card.setFavourite(rs.getBoolean("is_favourite"));
+            card.setCardCollection(cardCollection);
+            card.setUser(user);
+
+            return card;
+        });
+    }
+
+    //to mark card as favourite or not
+    @Override
+    public Optional<Card> changeFavourite(boolean is_favourite, Integer id){
+        String updateQuery = "UPDATE cards SET is_favourite=? WHERE id=?";
+        jdbcTemplate.update(updateQuery, is_favourite, id);
+        return findById(id);
+
+    }
+
+
+
+    //random cards where collection is public
+    @Override
+    public List<Card> getRandomCards() {
+        String query = "SELECT c.id AS card_id, c.front, c.backside, c.created_at, c.is_favourite, " +
+                "col.id AS collection_id, col.title AS collection_title, col.is_public, " +
+                "u.id AS user_id, u.username " +
+                "FROM cards c " +
+                "JOIN collections col ON c.collection_id = col.id " +
+                "JOIN users u ON c.user_id = u.id " +
+                "WHERE col.is_public = TRUE " +
+                "ORDER BY RAND()";
+
+        return jdbcTemplate.query(query, (rs, rowNum) -> {
+            // Mapping each row to a Card object
+
+            User user = User.builder()
+                    .id(rs.getInt("user_id"))
+                    .username(rs.getString("username"))
+                    .build();
+
+            CardCollection cardCollection = CardCollection.builder()
+                    .id(rs.getInt("collection_id"))
+                    .title(rs.getString("collection_title"))
+                    .build();
+
+            Card card = new Card();
+            card.setId(rs.getInt("card_id"));
+            card.setFront(rs.getString("front"));
+            card.setBackside(rs.getString("backside"));
+            card.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            card.setFavourite(rs.getBoolean("is_favourite"));
+            card.setCardCollection(cardCollection);
+            card.setUser(user);
+
+            return card;
+        });
+    }
+
+    @Override
+    public List<Card> findAllFavourite(Integer user_id) {
+        String query = "SELECT c.id AS card_id, c.front, c.backside, c.created_at, c.is_favourite, " +
+                "col.id AS collection_id, col.title AS collection_title, " +
+                "u.id AS user_id, u.username " +
+                "FROM cards c " +
+                "JOIN collections col ON c.collection_id = col.id " +
+                "JOIN users u ON c.user_id = u.id " +
+                "WHERE c.is_favourite = TRUE ";
+
+        return jdbcTemplate.query(query, (rs, rowNum) -> {
+            // Mapping each row to a Card object
+
+            User user = User.builder()
+                    .id(rs.getInt("user_id"))
+                    .username(rs.getString("username"))
+                    .build();
+
+            CardCollection cardCollection = CardCollection.builder()
+                    .id(rs.getInt("collection_id"))
+                    .title(rs.getString("collection_title"))
+                    .build();
+
+            Card card = new Card();
+            card.setId(rs.getInt("card_id"));
+            card.setFront(rs.getString("front"));
+            card.setBackside(rs.getString("backside"));
+            card.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            card.setFavourite(rs.getBoolean("is_favourite"));
+            card.setCardCollection(cardCollection);
+            card.setUser(user);
+
+            return card;
+        });
     }
 }
