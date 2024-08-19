@@ -4,6 +4,7 @@ import flashcards.requests.userRequests.LoginRequest;
 import flashcards.requests.userRequests.RegisterRequest;
 import flashcards.responses.TokenResponse;
 import flashcards.responses.UserRegisterResponse;
+import flashcards.services.interfaces.CollectionService;
 import flashcards.services.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,12 +17,14 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final CollectionService collectionService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
 
         UserRegisterResponse response = userService.createUser(request.getUsername(),
                 request.getEmail(), request.getPassword());
+        //collectionService.createDefaultCollection(response.getUsername());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }

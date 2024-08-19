@@ -4,14 +4,17 @@ import flashcards.entities.CardCollection;
 
 import flashcards.requests.collectionRequests.CreateCollectionRequest;
 import flashcards.requests.collectionRequests.UpdateCollectionRequest;
+import flashcards.responses.CardCollectionResponse;
 import flashcards.services.interfaces.CollectionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/flashcards/cardCollection")
+@RequestMapping("/flashcards/collection")
 @CrossOrigin("*")
 @AllArgsConstructor
 public class CollectionController {
@@ -20,9 +23,9 @@ public class CollectionController {
     @PostMapping("")
     public ResponseEntity<?> addCollection(@RequestBody CreateCollectionRequest request){
 
-        CardCollection cardCollection = collectionService.createCollection(request.getTitle(),
+        CardCollectionResponse response = collectionService.createCollection(request.getTitle(),
                 request.getDescription(), request.isPublic());
-        return ResponseEntity.status(HttpStatus.CREATED).body(cardCollection);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
@@ -34,19 +37,21 @@ public class CollectionController {
     @PutMapping("/{id}")
     public ResponseEntity<?> editCollection(@PathVariable Integer id, @RequestBody UpdateCollectionRequest request){
 
-        CardCollection cardCollection = collectionService.updateCollection(id, request.getTitle(),
-                request.getDescription(), request.isPublic());
-        return ResponseEntity.status(HttpStatus.OK).body(cardCollection);
+        CardCollectionResponse response = collectionService.updateCollection(id, request.getTitle(),
+                request.getDescription());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCollection(@PathVariable Integer id){
-        return ResponseEntity.status(HttpStatus.OK).body(collectionService.getCollectionById(id));
+        CardCollectionResponse response = collectionService.getCollectionById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("")
     public ResponseEntity<?> getAllCollections(){
-        return ResponseEntity.status(HttpStatus.OK).body(collectionService.getAllCollections());
+        List<CardCollectionResponse> response = collectionService.getAllCollections();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /*

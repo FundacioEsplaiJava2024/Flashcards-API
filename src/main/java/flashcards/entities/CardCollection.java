@@ -25,6 +25,7 @@ public class CardCollection {
 
     private LocalDateTime createdAt;
 
+    //for postman -> "public": true/false
     private boolean isPublic;
 
     @JsonProperty("user_id")

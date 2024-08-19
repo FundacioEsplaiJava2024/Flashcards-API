@@ -7,6 +7,9 @@ spring:
     password: root
     initialization-mode: always
     schema: classpath:schema.sql
+  jpa:
+    hibernate:
+      ddl-auto: update
   sql:
     init:
       mode: always

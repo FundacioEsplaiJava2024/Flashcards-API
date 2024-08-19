@@ -7,11 +7,12 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
 @Builder
-public class UserRegisterResponse {
+@AllArgsConstructor
+public class CardCollectionResponse {
+    private String title;
+    private String description;
+    private boolean isPublic;
+    private LocalDateTime createdAt;
     private String username;
-    private String email;
-    private LocalDateTime register_date;
-
 }
