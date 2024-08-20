@@ -4,19 +4,18 @@ spring:
   datasource:
     username: root
     url: jdbc:mysql://localhost:3306/flashcards
-    password: root
-    initialization-mode: always
-    schema: classpath:schema.sql
+    password:
   jpa:
     hibernate:
       ddl-auto: update
   sql:
     init:
       mode: always
+      schema-locations: classpath:schema.sql
   mail:
     host: ${EMAIL_HOST}
     port: ${EMAIL_PORT}
-    id: ${EMAIL_ID}
+    username: ${EMAIL_ID}
     password: ${EMAIL_PASSWORD}
     default-encoding: UTF-8
     properties:

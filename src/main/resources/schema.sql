@@ -1,10 +1,9 @@
-DROP SCHEMA IF EXISTS flashcards;
-
-CREATE SCHEMA IF NOT EXISTS flashcards DEFAULT CHARACTER SET utf8mb4;
+-- Elimina la base de datos si ya existe y la vuelve a crear
+DROP DATABASE IF EXISTS flashcards;
+CREATE DATABASE IF NOT EXISTS flashcards DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE flashcards;
 
--- Table structure for table users
-
+-- Estructura de la tabla users
 DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
    id int NOT NULL AUTO_INCREMENT,
@@ -16,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
    PRIMARY KEY (id)
 );
 
+-- Estructura de la tabla collections
 DROP TABLE IF EXISTS collections;
 CREATE TABLE IF NOT EXISTS collections (
    id int NOT NULL AUTO_INCREMENT,
@@ -31,21 +31,22 @@ CREATE TABLE IF NOT EXISTS collections (
        ON DELETE CASCADE
 );
 
+-- Estructura de la tabla cards
 DROP TABLE IF EXISTS cards;
 CREATE TABLE IF NOT EXISTS cards (
-   `id` int NOT NULL AUTO_INCREMENT,
-   `front` varchar(255) NOT NULL,
-   `backside` varchar(255) DEFAULT NULL,
-   `created_at` datetime,
-   `is_favourite` BIT(1),
-   `collection_id` int NOT NULL,
-   `user_id` int NOT NULL,
+   id int NOT NULL AUTO_INCREMENT,
+   front varchar(255) NOT NULL,
+   backside varchar(255) DEFAULT NULL,
+   created_at datetime,
+   is_favourite BIT(1),
+   collection_id int NOT NULL,
+   user_id int NOT NULL,
    PRIMARY KEY (id),
    CONSTRAINT fk_collections
        FOREIGN KEY (collection_id)
        REFERENCES collections (id),
    CONSTRAINT fk_users_card
-          FOREIGN KEY (user_id)
-          REFERENCES users (id)
+       FOREIGN KEY (user_id)
+       REFERENCES users (id)
        ON DELETE CASCADE
 );
