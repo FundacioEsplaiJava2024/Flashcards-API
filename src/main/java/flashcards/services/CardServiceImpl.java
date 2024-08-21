@@ -6,6 +6,7 @@ import flashcards.entities.User;
 import flashcards.exceptions.AccessDeniedException;
 import flashcards.mapper.CardMapper;
 import flashcards.repos.interfaces.CardRepository;
+import flashcards.repos.interfaces.HashtagRepository;
 import flashcards.responses.CardResponse;
 import flashcards.services.interfaces.CardService;
 import flashcards.services.interfaces.CollectionService;
@@ -23,9 +24,10 @@ public class CardServiceImpl implements CardService {
     private final CardRepository cardRepository;
     private final UserService userService;
     private final CollectionService collectionService;
+    private final HashtagRepository hashtagRepository;
 
     @Override
-    public CardResponse addCard(String front, String backside, Integer collection_id) {
+    public CardResponse addCard(String front, String backside, Integer collection_id, List<String> hashtags) {
         User loggedUser = userService.getLoggedUser();
         CardCollection cardCollection = collectionService.getCollectionByIdForCards(collection_id);
 
@@ -38,7 +40,13 @@ public class CardServiceImpl implements CardService {
                 .user(loggedUser)
                 .build();
 
-        cardRepository.addCard(card);
+        Integer cardId = cardRepository.addCard(card);
+
+
+        if(hashtags != null) {
+            card.setHashtags(hashtags);
+            hashtags.forEach(hashtag -> hashtagRepository.addHashtag(cardId, hashtag));
+        }
         return CardMapper.toResponse(card);
     }
 

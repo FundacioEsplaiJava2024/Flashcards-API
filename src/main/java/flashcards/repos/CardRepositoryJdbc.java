@@ -7,9 +7,14 @@ import flashcards.repos.interfaces.CardRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -22,8 +27,19 @@ public class CardRepositoryJdbc implements CardRepository {
     public int addCard(Card card) {
         String insertQuery = "INSERT INTO cards" +
                 "(front, backside, created_at, is_favourite, collection_id, user_id) VALUES (?,?,?,?,?,?)";
-        return jdbcTemplate.update(insertQuery, card.getFront(), card.getBackside(), card.getCreatedAt(),
-                            card.isFavourite(), card.getCardCollection().getId(), card.getUser().getId());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(insertQuery, new String[] {"id"});
+            ps.setString(1, card.getFront());
+            ps.setString(2, card.getBackside());
+            ps.setTimestamp(3, Timestamp.valueOf(card.getCreatedAt()));
+            ps.setBoolean(4, card.isFavourite());
+            ps.setInt(5, card.getCardCollection().getId());
+            ps.setInt(6, card.getUser().getId());
+            return ps;
+        }, keyHolder);
+
+        return Objects.requireNonNull(keyHolder.getKey()).intValue();
     }
 
     @Override

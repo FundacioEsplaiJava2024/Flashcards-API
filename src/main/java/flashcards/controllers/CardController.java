@@ -26,7 +26,7 @@ public class CardController {
     public ResponseEntity<?> addCard( @Valid @RequestBody CreateCardRequest request){
 
         CardResponse response = cardService.addCard(request.getFront(),
-                request.getBackside(), request.getCollection_id());
+                request.getBackside(), request.getCollection_id(), request.getHashtags());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
