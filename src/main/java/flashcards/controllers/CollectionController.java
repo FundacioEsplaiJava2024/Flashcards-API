@@ -6,6 +6,7 @@ import flashcards.requests.collectionRequests.CreateCollectionRequest;
 import flashcards.requests.collectionRequests.UpdateCollectionRequest;
 import flashcards.responses.CardCollectionResponse;
 import flashcards.services.interfaces.CollectionService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class CollectionController {
     private final CollectionService collectionService;
 
     @PostMapping("")
-    public ResponseEntity<?> addCollection(@RequestBody CreateCollectionRequest request){
+    public ResponseEntity<?> addCollection(@Valid @RequestBody CreateCollectionRequest request){
 
         CardCollectionResponse response = collectionService.createCollection(request.getTitle(),
                 request.getDescription(), request.isPublic());
@@ -35,7 +36,7 @@ public class CollectionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editCollection(@PathVariable Integer id, @RequestBody UpdateCollectionRequest request){
+    public ResponseEntity<?> editCollection(@Valid @PathVariable Integer id, @RequestBody UpdateCollectionRequest request){
 
         CardCollectionResponse response = collectionService.updateCollection(id, request.getTitle(),
                 request.getDescription());

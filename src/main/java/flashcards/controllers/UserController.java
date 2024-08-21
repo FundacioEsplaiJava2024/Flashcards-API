@@ -6,6 +6,7 @@ import flashcards.responses.TokenResponse;
 import flashcards.responses.UserRegisterResponse;
 import flashcards.services.interfaces.CollectionService;
 import flashcards.services.interfaces.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class UserController {
     private final CollectionService collectionService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request){
 
         UserRegisterResponse response = userService.createUser(request.getUsername(),
                 request.getEmail(), request.getPassword());
@@ -30,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request){
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request){
 
         TokenResponse token = userService.login(request.getEmail(),
                 request.getPassword());
