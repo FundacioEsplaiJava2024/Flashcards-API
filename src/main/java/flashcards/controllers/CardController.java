@@ -5,6 +5,7 @@ import flashcards.requests.card.CreateCardRequest;
 import flashcards.requests.card.UpdateCardRequest;
 import flashcards.responses.CardResponse;
 import flashcards.services.interfaces.CardService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,9 @@ public class CardController {
 
     private final CardService cardService;
 
+
     @PostMapping("")
-    public ResponseEntity<?> addCard(@RequestBody CreateCardRequest request){
+    public ResponseEntity<?> addCard( @Valid @RequestBody CreateCardRequest request){
 
         CardResponse response = cardService.addCard(request.getFront(),
                 request.getBackside(), request.getCollection_id());
