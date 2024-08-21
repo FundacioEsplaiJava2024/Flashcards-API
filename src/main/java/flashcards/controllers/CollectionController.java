@@ -50,7 +50,7 @@ public class CollectionController {
 
     @GetMapping("")
     public ResponseEntity<?> getAllCollections(){
-        List<CardCollectionResponse> response = collectionService.getAllCollections();
+        List<CardCollectionResponse> response = collectionService.getLoggedUserAllCollections();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

@@ -126,7 +126,7 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public List<CardCollectionResponse> getAllCollections(){
+    public List<CardCollectionResponse> getLoggedUserAllCollections(){
         User loggedUser = userService.getLoggedUser();
         List<CardCollection> collections = collectionRepository.findAll(loggedUser.getId());
         return CardCollectionMapper.toResponseList(collections);
