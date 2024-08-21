@@ -89,16 +89,15 @@ public class CardRepositoryJdbc implements CardRepository {
 
     @Override
     public List<Card> findAllByCollection(Integer collection_id) {
-        String selectQuery = "SELECT c.id AS card_id, c.front, c.backside, c.created_at, c.is_favourite, \n" +
-                "                col.id AS collection_id, col.title AS collection_title,\n" +
-                "                u.id AS user_id, u.username\n" +
-                "                FROM cards c \n" +
-                "                JOIN collections col ON c.collection_id = col.id \n" +
-                "                JOIN users u ON c.user_id = u.id \n" +
-                "                WHERE c.id = ?";
+        String selectQuery = "SELECT c.id AS card_id, c.front, c.backside, c.created_at, c.is_favourite, " +
+                "col.id AS collection_id, col.title AS collection_title, col.is_public, " +
+                "u.id AS user_id, u.username " +
+                "FROM cards c " +
+                "JOIN collections col ON c.collection_id = col.id " +
+                "JOIN users u ON c.user_id = u.id " +
+                "WHERE col.id = ?";
 
-        return jdbcTemplate.query(selectQuery, (rs, rowNum) -> {
-            // Mapping each row to a Card object
+        return jdbcTemplate.query(selectQuery, new Object[]{collection_id}, (rs, rowNum) -> {
 
             User user = User.builder()
                     .id(rs.getInt("user_id"))
@@ -108,6 +107,7 @@ public class CardRepositoryJdbc implements CardRepository {
             CardCollection cardCollection = CardCollection.builder()
                     .id(rs.getInt("collection_id"))
                     .title(rs.getString("collection_title"))
+                    .isPublic(rs.getBoolean("is_public"))
                     .build();
 
             Card card = new Card();
@@ -180,10 +180,9 @@ public class CardRepositoryJdbc implements CardRepository {
                 "FROM cards c " +
                 "JOIN collections col ON c.collection_id = col.id " +
                 "JOIN users u ON c.user_id = u.id " +
-                "WHERE c.is_favourite = TRUE ";
+                "WHERE c.is_favourite = TRUE AND c.user_id = ? ";
 
         return jdbcTemplate.query(query, (rs, rowNum) -> {
-            // Mapping each row to a Card object
 
             User user = User.builder()
                     .id(rs.getInt("user_id"))

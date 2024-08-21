@@ -9,8 +9,8 @@ VALUES
 INSERT INTO collections (title, description, created_at, is_public, user_id)
 VALUES 
 ('Animales Curiosos', 'Colección de datos curiosos sobre animales', NOW(), 1, 1),
-('Curiosidades Históricas', 'Colección de datos curiosos sobre la historia', NOW(), 1, 1),
-('My Collection', 'A description of my collection', NOW(), 1, 1);
+('Curiosidades Históricas', 'Colección de datos curiosos sobre la historia', NOW(), 0, 1),
+('My Collection', 'A description of my collection', NOW(), 1, 2);
 
 -- Insertar 100 datos curiosos en la tabla `cards`
 INSERT INTO cards (front, backside, created_at, is_favourite, collection_id, user_id)
