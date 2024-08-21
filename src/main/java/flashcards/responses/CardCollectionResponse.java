@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 public class CardCollectionResponse {
+    private Integer id;
     private String title;
     private String description;
-    private boolean isPublic;
+    private boolean publicCollection;
     private LocalDateTime createdAt;
     private String username;
 }

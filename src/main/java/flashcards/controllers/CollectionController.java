@@ -55,9 +55,4 @@ public class CollectionController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    /*
-    @GetMapping("cards/{id}")
-    public ResponseEntity<?> getAllCardsByCollection(Integer id){
-        return ResponseEntity.status(HttpStatus.OK).body(collectionService.getAllCardsByCollection(id));
-    }*/
 }
