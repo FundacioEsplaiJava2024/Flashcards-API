@@ -144,7 +144,7 @@ public class CardRepositoryJdbc implements CardRepository {
                 "JOIN collections col ON c.collection_id = col.id " +
                 "JOIN users u ON c.user_id = u.id " +
                 "WHERE col.is_public = TRUE " +
-                "ORDER BY RAND()";
+                "ORDER BY RAND() LIMIT 20";
 
         return jdbcTemplate.query(query, (rs, rowNum) -> {
             // Mapping each row to a Card object
