@@ -50,3 +50,15 @@ CREATE TABLE IF NOT EXISTS cards (
        REFERENCES users (id)
        ON DELETE CASCADE
 );
+
+-- Table hashtags
+DROP TABLE IF EXISTS hashtags;
+CREATE TABLE IF NOT EXISTS hashtags (
+   hashtag varchar(50) NOT NULL,
+   card_id int NOT NULL,
+   PRIMARY KEY (hashtag, card_id),
+   CONSTRAINT fk_cards_hashtag
+       FOREIGN KEY (card_id)
+       REFERENCES cards (id)
+       ON DELETE CASCADE
+);
