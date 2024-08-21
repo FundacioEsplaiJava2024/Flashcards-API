@@ -80,4 +80,12 @@ public class CardController {
         List<CardResponse> response = cardService.getAllFavourite();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @GetMapping("/hashtag")
+    public ResponseEntity<?> getCardsByHashtag(
+            @RequestParam(name = "hashtag", required = true) String hashtag){
+        List<CardResponse> response = cardService.getCardsByHashtag(hashtag);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
 }

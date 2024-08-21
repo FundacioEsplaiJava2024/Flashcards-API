@@ -25,4 +25,6 @@ public interface CardService {
     List<CardResponse> getRandomCards();
 
     List<CardResponse> getAllFavourite();
+
+    List<CardResponse> getCardsByHashtag(String hashtag);
 }

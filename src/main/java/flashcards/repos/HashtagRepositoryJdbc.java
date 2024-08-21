@@ -21,14 +21,8 @@ public class HashtagRepositoryJdbc implements HashtagRepository {
     }
 
     @Override
-    public int deleteById(String hashtag) {
-        String deleteQuery = "DELETE FROM hashtags WHERE hashtag=?";
-        return jdbcTemplate.update(deleteQuery, hashtag);
-    }
-
-    @Override
     public List<Integer> findAll(String hashtag) {
-        String selectQuery = "SELECT * FROM hashtags WHERE hashtag=?";
-        return jdbcTemplate.query(selectQuery, BeanPropertyRowMapper.newInstance(Integer.class), hashtag );
+        String selectQuery = "SELECT card_id FROM hashtags WHERE hashtag=?";
+        return jdbcTemplate.queryForList(selectQuery, Integer.class , hashtag );
     }
 }
