@@ -32,13 +32,13 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
     }
 
     @Override
-    public Optional<CardCollection> changePublicStatus(Integer id, CardCollection cardCollection) {
+    public CardCollection changePublicStatus(Integer id, CardCollection cardCollection) {
         String updateQuery = "UPDATE collections SET is_public=? WHERE id=?";
 
         jdbcTemplate.update(updateQuery,
                 cardCollection.isPublic(),
                 id);
-        return findById(id);
+        return findById(id).get();
     }
 
     @Override
@@ -51,11 +51,11 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
 
             return Optional.ofNullable(jdbcTemplate.queryForObject(query, new Object[]{id}, (rs, rowNum) -> {
 
-                User user = new User();
-                user.setId(rs.getInt("user_id"));
-                user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
-
+                User user = User.builder()
+                        .id(rs.getInt("user_id"))
+                        .username(rs.getString("username"))
+                        .email(rs.getString("email"))
+                        .build();
 
                 CardCollection cardCollection = new CardCollection();
                 cardCollection.setId(rs.getInt("collection_id"));

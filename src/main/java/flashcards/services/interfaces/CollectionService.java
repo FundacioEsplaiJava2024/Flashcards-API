@@ -18,7 +18,7 @@ public interface CollectionService {
 
     CardCollectionResponse getCollectionById(Integer id);
 
-    List<CardCollectionResponse> getAllCollections();
+    List<CardCollectionResponse> getLoggedUserAllCollections();
     CardCollection getCollectionByIdForCards(Integer id);
 
     CardCollectionResponse changePublicStatus(Integer id, boolean isPublic);

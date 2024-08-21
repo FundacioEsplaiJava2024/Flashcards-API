@@ -3,6 +3,7 @@ package flashcards.services;
 import flashcards.entities.Card;
 import flashcards.entities.CardCollection;
 import flashcards.entities.User;
+import flashcards.exceptions.AccessDeniedException;
 import flashcards.mapper.CardMapper;
 import flashcards.repos.interfaces.CardRepository;
 import flashcards.responses.CardResponse;
@@ -53,21 +54,27 @@ public class CardServiceImpl implements CardService {
     @Override
     public void deleteCard(Integer id) {
         Optional<Card> cardOpt = cardRepository.findById(id);
+        User loggedUser = userService.getLoggedUser();
         if(!cardOpt.isPresent()){
             //throw an exception
         }
-        if(cardOpt.get().getUser().getId() == userService.getLoggedUser().getId()){
-        cardRepository.deleteById(id);
+        if(cardOpt.get().getUser().getId() != loggedUser.getId()) {
+            throw new AccessDeniedException("You do not have permission to delete this card.");
         }
+        cardRepository.deleteById(id);
+
     }
 
     @Override
     public CardResponse updateCard(String frontside, String backside, Integer id) {
 
         Optional<Card> cardOpt = cardRepository.findById(id);
-        User loggerUser = userService.getLoggedUser();
+        User loggedUser = userService.getLoggedUser();
         if(!cardOpt.isPresent()){
             //throw an exception if the card wasn't found
+        }
+        if(cardOpt.get().getUser().getId() != loggedUser.getId()) {
+            throw new AccessDeniedException("You do not have permission to change this card.");
         }
 
         Optional<Card> updatedCard = cardOpt;
@@ -105,7 +112,12 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public List<CardResponse> getAllCardsByCollection(Integer collection_id) {
+        User loggedUser = userService.getLoggedUser();
         List<Card> cards = cardRepository.findAllByCollection(collection_id);
+
+        if(!cards.get(0).getCardCollection().isPublic() || cards.get(0).getUser().getId() != loggedUser.getId()) {
+            throw new AccessDeniedException("This collection is private");
+        }
         return CardMapper.toResponseList(cards);
     }
 

@@ -10,8 +10,7 @@ public interface CollectionRepository {
     int addCollection(CardCollection cardCollection);
 
     int deleteById(Integer id);
-
-    Optional<CardCollection> changePublicStatus(Integer id, CardCollection cardCollection);
+    CardCollection changePublicStatus(Integer id, CardCollection cardCollection);
 
     Optional<CardCollection> findById(Integer id);
 
