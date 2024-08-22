@@ -62,3 +62,21 @@ CREATE TABLE IF NOT EXISTS hashtags (
        REFERENCES cards (id)
        ON DELETE CASCADE
 );
+
+-- Drop the user_collections table if it exists
+DROP TABLE IF EXISTS user_collections;
+
+-- Create the user_collections table
+CREATE TABLE IF NOT EXISTS user_collections (
+   user_id INT NOT NULL,
+   collection_id INT NOT NULL,
+   PRIMARY KEY (user_id, collection_id),
+   CONSTRAINT fk_user_collections_user
+       FOREIGN KEY (user_id)
+       REFERENCES users (id)
+       ON DELETE CASCADE,
+   CONSTRAINT fk_user_collections_collection
+       FOREIGN KEY (collection_id)
+       REFERENCES collections (id)
+       ON DELETE CASCADE
+);
