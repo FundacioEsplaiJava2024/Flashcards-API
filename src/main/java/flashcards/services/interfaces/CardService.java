@@ -6,7 +6,7 @@ import flashcards.responses.CardResponse;
 import java.util.List;
 
 public interface CardService {
-    CardResponse addCard(String frontside, String backside, Integer collection_id);
+    CardResponse addCard(String frontside, String backside, Integer collection_id, List<String> hashtags);
 
     CardResponse getCardById(Integer id);
 
@@ -25,4 +25,6 @@ public interface CardService {
     List<CardResponse> getRandomCards();
 
     List<CardResponse> getAllFavourite();
+
+    List<CardResponse> getCardsByHashtag(String hashtag);
 }

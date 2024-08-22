@@ -6,6 +6,7 @@ import flashcards.entities.User;
 import flashcards.exceptions.AccessDeniedException;
 import flashcards.mapper.CardMapper;
 import flashcards.repos.interfaces.CardRepository;
+import flashcards.repos.interfaces.HashtagRepository;
 import flashcards.responses.CardResponse;
 import flashcards.services.interfaces.CardService;
 import flashcards.services.interfaces.CollectionService;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,9 +25,10 @@ public class CardServiceImpl implements CardService {
     private final CardRepository cardRepository;
     private final UserService userService;
     private final CollectionService collectionService;
+    private final HashtagRepository hashtagRepository;
 
     @Override
-    public CardResponse addCard(String front, String backside, Integer collection_id) {
+    public CardResponse addCard(String front, String backside, Integer collection_id, List<String> hashtags) {
         User loggedUser = userService.getLoggedUser();
         CardCollection cardCollection = collectionService.getCollectionByIdForCards(collection_id);
 
@@ -38,7 +41,13 @@ public class CardServiceImpl implements CardService {
                 .user(loggedUser)
                 .build();
 
-        cardRepository.addCard(card);
+        Integer cardId = cardRepository.addCard(card);
+
+
+        if(hashtags != null) {
+            card.setHashtags(hashtags);
+            hashtags.forEach(hashtag -> hashtagRepository.addHashtag(cardId, hashtag));
+        }
         return CardMapper.toResponse(card);
     }
 
@@ -152,8 +161,25 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public List<CardResponse> getAllFavourite(){
-        User user = userService.getLoggedUser();
-        List<Card> favouriteCards = cardRepository.findAllFavourite(user.getId());
+        User loggedUser = userService.getLoggedUser();
+        List<Card> favouriteCards = cardRepository.findAllFavourite(loggedUser.getId());
         return CardMapper.toResponseList(favouriteCards);
+    }
+
+    @Override
+    public List<CardResponse> getCardsByHashtag(String hashtag){
+        User loggedUser = userService.getLoggedUser();
+        List<Integer> cardIdListWithHashtag = hashtagRepository.findAll(hashtag);
+        List<Card> cards = new ArrayList<>();
+
+        for (Integer integer : cardIdListWithHashtag) {
+            Optional<Card> card = cardRepository.findById(integer);
+            if(card.get().getCardCollection().isPublic() || card.get().getUser().getId() == loggedUser.getId()) {
+                cards.add(card.get());
+            }
+        }
+
+        return  CardMapper.toResponseList(cards);
+
     }
 }

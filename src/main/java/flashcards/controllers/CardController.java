@@ -26,7 +26,7 @@ public class CardController {
     public ResponseEntity<?> addCard( @Valid @RequestBody CreateCardRequest request){
 
         CardResponse response = cardService.addCard(request.getFront(),
-                request.getBackside(), request.getCollection_id());
+                request.getBackside(), request.getCollection_id(), request.getHashtags());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -79,5 +79,13 @@ public class CardController {
     public ResponseEntity<?> getFavouriteCards(){
         List<CardResponse> response = cardService.getAllFavourite();
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/hashtag")
+    public ResponseEntity<?> getCardsByHashtag(
+            @RequestParam(name = "hashtag", required = true) String hashtag){
+        List<CardResponse> response = cardService.getCardsByHashtag(hashtag);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 }

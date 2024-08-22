@@ -4,16 +4,14 @@ spring:
   datasource:
     username: root
     url: jdbc:mysql://localhost:3306/flashcards
-    password: root
-    initialization-mode: always
-    schema: classpath:schema.sql
-    data: classpath:data.sql
-    jpa:
-      hibernate:
-        ddl-auto: create
-    sql:
-      init:
-        mode: always
+    password:
+  jpa:
+        hibernate:
+          ddl-auto: update
+  sql:
+        init:
+          mode: always
+          schema-locations: classpath:schema.sql
   mail:
     host: ${EMAIL_HOST}
     port: ${EMAIL_PORT}

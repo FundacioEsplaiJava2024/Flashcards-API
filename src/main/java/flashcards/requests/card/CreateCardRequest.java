@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class CreateCardRequest {
 
@@ -18,5 +20,7 @@ public class CreateCardRequest {
 
     @NotNull(message = "The collection ID is required")
     private Integer collection_id;
+
+    private List<String> hashtags;
 
 }

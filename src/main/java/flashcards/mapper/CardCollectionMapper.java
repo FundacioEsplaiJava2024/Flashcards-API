@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class CardCollectionMapper {
 
     public static CardCollectionResponse toResponse(CardCollection collection) {
-        return new CardCollectionResponse(collection.getTitle(), collection.getDescription()
+        return new CardCollectionResponse(collection.getId(), collection.getTitle(), collection.getDescription()
                 , collection.isPublic(), collection.getCreatedAt(), collection.getUser().getUsername());
     }
 
