@@ -2,13 +2,13 @@ package flashcards.repos;
 
 import flashcards.entities.CardCollection;
 import flashcards.entities.User;
-import flashcards.exceptions.CollectionNotFoundException;
 import flashcards.repos.interfaces.CollectionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -149,6 +149,29 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
         String insertQuery = "INSERT INTO user_collections" +
                 "(collection_id, user_id) VALUES (?,?)";
         return jdbcTemplate.update(insertQuery, collection_id, user_id);
+    }
+
+    @Override
+    public List<CardCollection> findByTitle(String titleWord) {
+        String selectQuery = "SELECT id, title, description, created_at " +
+                "FROM collections " +
+                "WHERE title LIKE ? " +
+                "AND is_public = TRUE";
+
+        try {
+            List<CardCollection> cardCollections = jdbcTemplate.query(selectQuery, new Object[]{"%" + titleWord + "%"}, (rs, rowNum) -> {
+                return CardCollection.builder()
+                        .id(rs.getInt("id"))
+                        .title(rs.getString("title"))
+                        .description(rs.getString("description"))
+                        .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                        .build();
+            });
+
+            return cardCollections;
+        } catch (EmptyResultDataAccessException ex) {
+            return Collections.emptyList();
+        }
     }
 }
 

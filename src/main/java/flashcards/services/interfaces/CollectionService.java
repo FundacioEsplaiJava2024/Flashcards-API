@@ -26,4 +26,6 @@ public interface CollectionService {
     List<CardCollectionResponse> getRandomCollections();
 
     CardCollectionResponse saveOtherCollection(Integer collection_id);
+
+    List<CardCollectionResponse> findCollectionByTitle(String title);
 }

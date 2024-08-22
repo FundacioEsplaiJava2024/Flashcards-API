@@ -67,4 +67,11 @@ public class CollectionController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/title")
+    public ResponseEntity<?> findCollectionByTitle(
+            @RequestParam(name = "title", required = true) String title){
+        List<CardCollectionResponse> response = collectionService.findCollectionByTitle(title);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 }
