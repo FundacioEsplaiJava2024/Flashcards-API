@@ -34,4 +34,28 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error,error.getHttpStatus());
     }
 
+    @ExceptionHandler(CollectionNotFoundException.class)
+    public ResponseEntity<Object> handleCollectionNotFoundException(Exception ex){
+
+        ErrorResponse error = ErrorResponse.builder()
+                .httpStatus(HttpStatus.NOT_FOUND)
+                .message(ex.getMessage())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(error,error.getHttpStatus());
+    }
+
+    @ExceptionHandler(CardNotFoundException.class)
+    public ResponseEntity<Object> handleCardNotFoundException(Exception ex){
+
+        ErrorResponse error = ErrorResponse.builder()
+                .httpStatus(HttpStatus.NOT_FOUND)
+                .message(ex.getMessage())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(error,error.getHttpStatus());
+    }
+
 }
