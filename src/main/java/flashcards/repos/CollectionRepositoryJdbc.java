@@ -2,8 +2,10 @@ package flashcards.repos;
 
 import flashcards.entities.CardCollection;
 import flashcards.entities.User;
+import flashcards.exceptions.CollectionNotFoundException;
 import flashcards.repos.interfaces.CollectionRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -47,7 +49,8 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
                     "JOIN users u ON c.user_id = u.id " +
                     "WHERE c.id = ?";
 
-            return Optional.ofNullable(jdbcTemplate.queryForObject(query, new Object[]{id}, (rs, rowNum) -> {
+        try {
+            CardCollection cardCollection = jdbcTemplate.queryForObject(query, new Object[]{id}, (rs, rowNum) -> {
 
                 User user = User.builder()
                         .id(rs.getInt("user_id"))
@@ -55,15 +58,20 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
                         .email(rs.getString("email"))
                         .build();
 
-                CardCollection cardCollection = new CardCollection();
-                cardCollection.setId(rs.getInt("collection_id"));
-                cardCollection.setTitle(rs.getString("title"));
-                cardCollection.setDescription(rs.getString("description"));
-                cardCollection.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                cardCollection.setPublic(rs.getBoolean("is_public"));
-                cardCollection.setUser(user);
-                return cardCollection;
-            }));
+                return CardCollection.builder()
+                        .id(rs.getInt("collection_id"))
+                        .title(rs.getString("title"))
+                        .description(rs.getString("description"))
+                        .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                        .isPublic(rs.getBoolean("is_public"))
+                        .user(user)
+                        .build();
+            });
+
+            return Optional.ofNullable(cardCollection);
+        } catch (EmptyResultDataAccessException ex) {
+            return Optional.empty();
+        }
         }
 
 

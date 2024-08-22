@@ -3,6 +3,7 @@ package flashcards.services;
 import flashcards.entities.CardCollection;
 import flashcards.entities.User;
 import flashcards.exceptions.AccessDeniedException;
+import flashcards.exceptions.CollectionNotFoundException;
 import flashcards.mapper.CardCollectionMapper;
 import flashcards.repos.interfaces.CollectionRepository;
 import flashcards.responses.CardCollectionResponse;
@@ -57,12 +58,12 @@ public class CollectionServiceImpl implements CollectionService {
 
     @Override
     public void deleteById(Integer id){
-        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
 
-        if (!collectionOpt.isPresent()) {
-            //throws an exception
-        }
-        if(collectionOpt.get().getUser().getId() != userService.getLoggedUser().getId()) {
+        CardCollection collection = collectionRepository.findById(id).orElseThrow(
+                () -> new CollectionNotFoundException("Collection with ID " + id + " not found"));
+
+        User user = userService.getLoggedUser();
+        if(collection.getUser().getId() != user.getId()) {
             throw new AccessDeniedException("You do not have permission to delete this collection.");
         }
             collectionRepository.deleteById(id);
@@ -71,39 +72,38 @@ public class CollectionServiceImpl implements CollectionService {
 
     @Override
     public CardCollectionResponse updateCollection(Integer id, String title, String description) {
-        //find cardCollection with the id, Optional because it can be null.
-        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
+
+        CardCollection collection = collectionRepository.findById(id).orElseThrow(
+                () -> new CollectionNotFoundException("Collection with ID " + id + " not found"));
 
         User loggerUser = userService.getLoggedUser();
-        if(!collectionOpt.isPresent()){
-            //throw an exception if the cardCollection wasn't found
-        }
 
-        if(collectionOpt.get().getUser().getId() != loggerUser.getId()) {
+
+        if(collection.getUser().getId() != loggerUser.getId()) {
             throw new AccessDeniedException("You do not have permission to change this collection.");
         }
-            Optional<CardCollection> updatedCollection = collectionOpt;
+            Optional<CardCollection> updatedCollection = Optional.of(collection);
 
             //to change title and description
             // do in case description and title aren't null and description and title aren't blank
             if(description != null && title != null && !description.trim().isEmpty() && !title.trim().isEmpty()) {
-                        collectionOpt.get().setTitle(title);
-                        collectionOpt.get().setDescription(description);
-                        updatedCollection = collectionRepository.updateCollection(collectionOpt.get(), id);
+                        collection.setTitle(title);
+                        collection.setDescription(description);
+                        updatedCollection = collectionRepository.updateCollection(collection, id);
                 }
 
             //to change description
             // do in case description isn't null and not empty
             else if(description != null && !description.trim().isEmpty()){
-                 collectionOpt.get().setDescription(description);
-                 updatedCollection = collectionRepository.updateCollection(collectionOpt.get(), id);
+                 collection.setDescription(description);
+                 updatedCollection = collectionRepository.updateCollection(collection, id);
              }
 
             //to change title
             // do in case title isn't null and not empty
             else if(title != null && !title.trim().isEmpty()) {
-                    collectionOpt.get().setTitle(title);
-                    updatedCollection = collectionRepository.updateCollection(collectionOpt.get(), id);
+                    collection.setTitle(title);
+                    updatedCollection = collectionRepository.updateCollection(collection, id);
             }
             //exception when the title is null
 
@@ -114,12 +114,12 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     public CardCollectionResponse getCollectionById(Integer id){
 
-        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
+        CardCollection collection = collectionRepository.findById(id).orElseThrow(
+                () -> new CollectionNotFoundException("Collection with ID " + id + " not found"));
 
         User loggedUser = userService.getLoggedUser();
-        CardCollection collection = collectionOpt.get();
 
-        if( !collection.isPublic() && collectionOpt.get().getUser().getId() != loggedUser.getId()) {
+        if( !collection.isPublic() && collection.getUser().getId() != loggedUser.getId()) {
             throw new AccessDeniedException("You do not have permission to access this collection.");
         }
         return CardCollectionMapper.toResponse(collection);
@@ -136,15 +136,12 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     public CardCollection getCollectionByIdForCards(Integer id){
 
-        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
+        CardCollection collection = collectionRepository.findById(id).orElseThrow(
+                () -> new CollectionNotFoundException("Collection with ID " + id + " not found"));
 
-        if (!collectionOpt.isPresent()) {
-            //throws an exception
-        }
         User loggedUser = userService.getLoggedUser();
-        CardCollection collection = collectionOpt.get();
 
-        if(collectionOpt.get().getUser().getId() != loggedUser.getId()) {
+        if(collection.getUser().getId() != loggedUser.getId()) {
             throw new AccessDeniedException("You do not have permission to access this collection.");
         }
 
@@ -154,14 +151,10 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     public CardCollectionResponse changePublicStatus(Integer id, boolean isPublic){
 
-        Optional<CardCollection> collectionOpt = collectionRepository.findById(id);
-
-        if (!collectionOpt.isPresent()) {
-            //throws an exception
-        }
+        CardCollection collection = collectionRepository.findById(id).orElseThrow(
+                () -> new CollectionNotFoundException("Collection with ID " + id + " not found"));
         User loggedUser = userService.getLoggedUser();
 
-        CardCollection collection = collectionOpt.get();
 
         if(collection.getUser().getId() != loggedUser.getId()) {
             throw new AccessDeniedException("You do not have permission to change this collection.");
@@ -184,10 +177,11 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     public CardCollectionResponse saveOtherCollection(Integer collection_id){
         User loggedUser = userService.getLoggedUser();
-        Optional<CardCollection> collectionOpt = collectionRepository.findById(collection_id);
+        CardCollection collection = collectionRepository.findById(collection_id).orElseThrow(
+                () -> new CollectionNotFoundException("Collection with ID " + collection_id + " not found"));
                 collectionRepository.saveOtherCollection(collection_id, loggedUser.getId());
 
-        return CardCollectionMapper.toResponse(collectionOpt.get());
+        return CardCollectionMapper.toResponse(collection);
     }
 
 }
