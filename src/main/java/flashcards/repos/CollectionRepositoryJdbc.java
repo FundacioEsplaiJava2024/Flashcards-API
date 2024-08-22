@@ -1,11 +1,9 @@
 package flashcards.repos;
 
-import flashcards.entities.Card;
 import flashcards.entities.CardCollection;
 import flashcards.entities.User;
 import flashcards.repos.interfaces.CollectionRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -110,6 +108,39 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
 
             return cardCollection;
         });
+    }
+
+    @Override
+    public List<CardCollection> getRandomCollections(Integer user_id) {
+        String query = "SELECT col.id AS collection_id, col.title, col.description, " +
+                "u.username " +
+                "FROM collections col " +
+                "JOIN users u ON col.user_id = u.id " +
+                "WHERE col.is_public = TRUE AND col.user_id != ? " +
+                "ORDER BY RAND() LIMIT 20";
+
+        return jdbcTemplate.query(query, new Object[]{user_id}, (rs, rowNum) -> {
+
+            User user = User.builder()
+                    .username(rs.getString("username"))
+                    .build();
+
+            CardCollection cardCollection = CardCollection.builder()
+                    .id(rs.getInt("collection_id"))
+                    .title(rs.getString("title"))
+                    .description(rs.getString("description"))
+                    .user(user)
+                    .build();
+
+            return cardCollection;
+        });
+    }
+
+    @Override
+    public int saveOtherCollection(Integer collection_id, Integer user_id){
+        String insertQuery = "INSERT INTO user_collections" +
+                "(collection_id, user_id) VALUES (?,?)";
+        return jdbcTemplate.update(insertQuery, collection_id, user_id);
     }
 }
 

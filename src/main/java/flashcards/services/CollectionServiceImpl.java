@@ -174,4 +174,20 @@ public class CollectionServiceImpl implements CollectionService {
 
     }
 
+    @Override
+    public List<CardCollectionResponse> getRandomCollections(){
+        User loggedUser = userService.getLoggedUser();
+        List<CardCollection> cards = collectionRepository.getRandomCollections(loggedUser.getId());
+        return CardCollectionMapper.toResponseList(cards);
+    }
+
+    @Override
+    public CardCollectionResponse saveOtherCollection(Integer collection_id){
+        User loggedUser = userService.getLoggedUser();
+        Optional<CardCollection> collectionOpt = collectionRepository.findById(collection_id);
+                collectionRepository.saveOtherCollection(collection_id, loggedUser.getId());
+
+        return CardCollectionMapper.toResponse(collectionOpt.get());
+    }
+
 }

@@ -22,4 +22,8 @@ public interface CollectionService {
     CardCollection getCollectionByIdForCards(Integer id);
 
     CardCollectionResponse changePublicStatus(Integer id, boolean isPublic);
+
+    List<CardCollectionResponse> getRandomCollections();
+
+    CardCollectionResponse saveOtherCollection(Integer collection_id);
 }
