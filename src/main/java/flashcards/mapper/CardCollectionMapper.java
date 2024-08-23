@@ -13,8 +13,21 @@ import java.util.stream.Collectors;
 public class CardCollectionMapper {
 
     public static CardCollectionResponse toResponse(CardCollection collection) {
-        return new CardCollectionResponse(collection.getId(), collection.getTitle(), collection.getDescription()
-                , collection.isPublic(), collection.getCreatedAt(), collection.getUser().getUsername());
+        if(collection.getUser() != null) {
+            return new CardCollectionResponse(collection.getId(), collection.getTitle(), collection.getDescription()
+                    , collection.isPublic(), collection.getCreatedAt(), collection.getUser().getUsername());
+        }
+
+            CardCollectionResponse response = CardCollectionResponse.builder()
+                    .id(collection.getId())
+                    .title(collection.getTitle())
+                    .description(collection.getDescription())
+                    .createdAt(collection.getCreatedAt())
+                    .build();
+
+        return response;
+
+
     }
 
     public  static List<CardCollectionResponse> toResponseList(List<CardCollection> collections) {

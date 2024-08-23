@@ -184,4 +184,15 @@ public class CollectionServiceImpl implements CollectionService {
         return CardCollectionMapper.toResponse(collection);
     }
 
+    @Override
+    public List<CardCollectionResponse> findCollectionByTitle(String title){
+        List<CardCollection> collections = collectionRepository.findByTitle(title);
+
+        if(collections.isEmpty()){
+            throw new CollectionNotFoundException("There are no collections");
+        }
+
+        return CardCollectionMapper.toResponseList(collections);
+    }
+
 }
