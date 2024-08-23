@@ -1,6 +1,7 @@
 package flashcards.services;
 
 import flashcards.entities.User;
+import flashcards.exceptions.customexceptions.CardNotFoundException;
 import flashcards.exceptions.customexceptions.UserAlreadyExistsException;
 import flashcards.repos.interfaces.UserRepository;
 import flashcards.security.JwtService;
@@ -30,6 +31,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(String username, String email, String password) {
+        User userUsername = userRepository.findByUsername(username);
+        if(userUsername != null){
+            throw new UserAlreadyExistsException("User with username "  + username + " already exists");
+        }
+
+        User userEmail = userRepository.findByEmail(email);
+        if(userEmail != null){
+            throw new UserAlreadyExistsException("User with email "  + email + " already exists");
+        }
+
         User user = User.builder()
                 .username(username)
                 .email(email)
@@ -38,28 +49,22 @@ public class UserServiceImpl implements UserService {
                 .enabled(false)
                 .build();
 
-        try {
-            Integer user_id = userRepository.addUser(user);
-            user.setId(user_id);
-        } catch (DuplicateKeyException ex) {
-            throw new UserAlreadyExistsException("User with username " + username + " or email " +
-                     email + " already exists");
-        }
-
+        Integer user_id = userRepository.addUser(user);
+        user.setId(user_id);
         return user;
 
     }
 
     @Override
     public String login(String email, String password) {
-            Optional<User> user = userRepository.findByEmail(email);
+            User user = userRepository.findByEmail(email);
 
             try {
-                if(!user.isPresent()){
+                if(user != null){
                     throw new BadCredentialsException("Invalid email or password, " +
                             "make sure you are registered and your account was verified");
                 }
-                var upAuth = new UsernamePasswordAuthenticationToken(user.get().getUsername(), password);
+                var upAuth = new UsernamePasswordAuthenticationToken(user.getUsername(), password);
                 Authentication auth = authenticationManager.authenticate(upAuth);
                 var jwtToken = jwtService.generateToken((User) auth.getPrincipal());
 

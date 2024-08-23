@@ -23,9 +23,15 @@ public class UserRepositoryJdbc implements UserRepository {
     @Override
     public User findByUsername(String username) {
         String selectByUsernameQuery = "SELECT * FROM users WHERE username = ?";
-
-        return jdbcTemplate.queryForObject(selectByUsernameQuery
-                , BeanPropertyRowMapper.newInstance(User.class), username);
+        try {
+            return jdbcTemplate.queryForObject(
+                    selectByUsernameQuery,
+                    BeanPropertyRowMapper.newInstance(User.class),
+                    username
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override
@@ -56,13 +62,16 @@ public class UserRepositoryJdbc implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        String selectByEmailQuery = "SELECT id, username, email, password, register_date, is_enabled FROM users WHERE email = ?";
+    public User findByEmail(String email) {
+        String selectByUsernameQuery = "SELECT * FROM users WHERE email = ?";
         try {
-            User user = jdbcTemplate.queryForObject(selectByEmailQuery, BeanPropertyRowMapper.newInstance(User.class), email);
-            return Optional.of(user);
+            return jdbcTemplate.queryForObject(
+                    selectByUsernameQuery,
+                    BeanPropertyRowMapper.newInstance(User.class),
+                    email
+            );
         } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
+            return null;
         }
     }
 }
