@@ -6,10 +6,16 @@ import flashcards.repos.interfaces.CollectionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -21,8 +27,19 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
     public int addCollection(CardCollection cardCollection) {
         String insertQuery = "INSERT INTO collections" +
                 "(title, description, created_at, is_public, user_id) VALUES (?,?,?,?,?)";
-        return jdbcTemplate.update(insertQuery, cardCollection.getTitle()
-                , cardCollection.getDescription(), cardCollection.getCreatedAt(), cardCollection.isPublic(), cardCollection.getUser().getId());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, cardCollection.getTitle());
+            ps.setString(2, cardCollection.getDescription());
+            ps.setTimestamp(3, Timestamp.valueOf(cardCollection.getCreatedAt()));
+            ps.setBoolean(4, cardCollection.isPublic());
+            ps.setInt(5, cardCollection.getUser().getId());
+            return ps;
+        }, keyHolder);
+
+        return Objects.requireNonNull(keyHolder.getKey()).intValue();
     }
 
     @Override
@@ -105,7 +122,7 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
                     .build();
 
 
-            CardCollection cardCollection = CardCollection.builder()
+            return CardCollection.builder()
                     .id(rs.getInt("collection_id"))
                     .title(rs.getString("title"))  // corrected to use alias directly
                     .description(rs.getString("description")) // corrected to use alias directly
@@ -114,7 +131,6 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
                     .user(user)
                     .build();
 
-            return cardCollection;
         });
     }
 

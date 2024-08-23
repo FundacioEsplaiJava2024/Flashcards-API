@@ -6,6 +6,7 @@ import flashcards.mapper.CardCollectionMapper;
 import flashcards.requests.collectionRequests.CreateCollectionRequest;
 import flashcards.requests.collectionRequests.UpdateCollectionRequest;
 import flashcards.responses.CardCollectionResponse;
+import flashcards.responses.MessageResponse;
 import flashcards.services.interfaces.CollectionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -33,8 +34,9 @@ public class CollectionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCollection(@PathVariable Integer id){
-        collectionService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("CardCollection deleted");
+        String message = collectionService.deleteById(id);
+        MessageResponse response = new MessageResponse(message);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping("/{id}")

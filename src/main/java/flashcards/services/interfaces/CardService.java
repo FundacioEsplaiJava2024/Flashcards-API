@@ -10,7 +10,7 @@ public interface CardService {
 
     Card getCardById(Integer id);
 
-    void deleteCard(Integer id);
+    String deleteCard(Integer id);
 
     Card updateCard(String frontside, String backside, Integer id);
 
@@ -30,5 +30,5 @@ public interface CardService {
 
     Card addHashtag(List<String> hashtag, Integer card_id);
 
-    void deleteHashtag(Integer card_id, String hashtag);
+    String deleteHashtag(Integer card_id, String hashtag);
 }

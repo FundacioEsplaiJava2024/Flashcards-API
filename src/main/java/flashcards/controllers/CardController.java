@@ -6,6 +6,7 @@ import flashcards.requests.card.CreateCardRequest;
 import flashcards.requests.card.HashtagsRequest;
 import flashcards.requests.card.UpdateCardRequest;
 import flashcards.responses.CardResponse;
+import flashcards.responses.MessageResponse;
 import flashcards.services.interfaces.CardService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -35,8 +36,9 @@ public class CardController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCard(@PathVariable Integer id){
-        cardService.deleteCard(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Card deleted");
+        String message = cardService.deleteCard(id);
+        MessageResponse response = new MessageResponse(message);
+        return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
     @PutMapping("/{id}")
@@ -113,8 +115,9 @@ public class CardController {
     @DeleteMapping("/{card_id}/hashtag")
     public ResponseEntity<?> deleteHashtag(@PathVariable Integer card_id,
                                            @RequestParam(name = "hashtag", required = true) String hashtag){
-        cardService.deleteHashtag(card_id, hashtag);
-        return ResponseEntity.status(HttpStatus.OK).body("Hashtag for card with ID " + card_id + " was deleted");
+        String message = cardService.deleteHashtag(card_id, hashtag);
+        MessageResponse response = new MessageResponse(message);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }

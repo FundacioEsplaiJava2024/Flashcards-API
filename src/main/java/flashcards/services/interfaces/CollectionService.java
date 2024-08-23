@@ -12,7 +12,7 @@ public interface CollectionService {
     // creating a 'default' cardCollection for all those cards that doesn't have any specified cardCollection
     void createDefaultCollection(String username);
 
-    void deleteById(Integer id);
+    String deleteById(Integer id);
 
     CardCollection updateCollection(Integer id, String title, String description);
 

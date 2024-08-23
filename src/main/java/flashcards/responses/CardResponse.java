@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class CardResponse {
+    private Integer id;
     private String front;
     private String back;
     private boolean favourite;

@@ -44,7 +44,7 @@ public class CardServiceImpl implements CardService {
 
         Integer cardId = cardRepository.addCard(card);
 
-
+        card.setId(cardId);
         if(hashtags != null) {
             card.setHashtags(hashtags);
             hashtags.forEach(hashtag -> hashtagRepository.addHashtag(cardId, hashtag));
@@ -57,18 +57,15 @@ public class CardServiceImpl implements CardService {
         Card card = cardRepository.findById(id).orElseThrow(
                 () -> new CardNotFoundException("Card with ID " + id + " not found"));
 
-        /*
-        User loggedUser = userService.getLoggedUser();
-        if(!card.getCardCollection().isPublic() ||card.getUser().getId() != loggedUser.getId()) {
-            throw new AccessDeniedException("This collection is private");
-        }*/
-
-        card.setHashtags(hashtagRepository.findAllHashtags(id));
+        List<String> hashtags = hashtagRepository.findAllHashtags(id);
+        if(hashtags != null) {
+            card.setHashtags(hashtags);
+        }
         return card;
     }
 
     @Override
-    public void deleteCard(Integer id) {
+    public String deleteCard(Integer id) {
 
         Card card = cardRepository.findById(id).orElseThrow(
                 () -> new CardNotFoundException("Card with ID " + id + " not found"));
@@ -79,6 +76,8 @@ public class CardServiceImpl implements CardService {
             throw new AccessDeniedException("You do not have permission to delete this card.");
         }
         cardRepository.deleteById(id);
+
+        return "Card with ID " + id + " was deleted successfully";
 
     }
 
@@ -208,7 +207,7 @@ public class CardServiceImpl implements CardService {
 
 
     @Override
-    public void deleteHashtag(Integer card_id, String hashtag){
+    public String deleteHashtag(Integer card_id, String hashtag){
 
         Card card = cardRepository.findById(card_id).orElseThrow(
                 () -> new CardNotFoundException("Card with ID " + card_id + " not found"));
@@ -220,5 +219,6 @@ public class CardServiceImpl implements CardService {
         }
 
         hashtagRepository.deleteHashtag(card_id, hashtag);
+        return "Hashtag " + hashtag + " for card with ID " + card_id + " was removed successfully";
     }
 }

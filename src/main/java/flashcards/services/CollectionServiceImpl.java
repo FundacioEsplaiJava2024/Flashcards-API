@@ -35,8 +35,9 @@ public class CollectionServiceImpl implements CollectionService {
                 .createdAt(LocalDateTime.now())
                 .user(loggedUser)
                 .build();
-        collectionRepository.addCollection(cardCollection);
+        Integer collection_id = collectionRepository.addCollection(cardCollection);
 
+        cardCollection.setId(collection_id);
         return cardCollection;
 
     }
@@ -57,7 +58,7 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public void deleteById(Integer id){
+    public String deleteById(Integer id){
 
         CardCollection collection = collectionRepository.findById(id).orElseThrow(
                 () -> new CollectionNotFoundException("Collection with ID " + id + " not found"));
@@ -67,7 +68,7 @@ public class CollectionServiceImpl implements CollectionService {
             throw new AccessDeniedException("You do not have permission to delete this collection.");
         }
             collectionRepository.deleteById(id);
-
+        return "Collection with ID " + id + " was deleted successfully";
     }
 
     @Override

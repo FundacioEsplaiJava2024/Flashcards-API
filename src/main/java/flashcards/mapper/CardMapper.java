@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class CardMapper {
 
     public static CardResponse toResponse(Card card) {
-        return new CardResponse(card.getFront(), card.getBackside(), card.isFavourite()
+        return new CardResponse(card.getId(), card.getFront(), card.getBackside(), card.isFavourite()
                 , card.getCreatedAt(), card.getHashtags(), card.getCardCollection().getTitle(), card.getUser().getUsername() );
     }
 
