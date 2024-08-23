@@ -173,5 +173,34 @@ public class CollectionRepositoryJdbc implements CollectionRepository {
             return Collections.emptyList();
         }
     }
+
+    @Override
+    public List<CardCollection> getUserOtherCollection(Integer user_id){
+        String query = "SELECT col.id AS collection_id, col.title, col.description, col.created_at, col.is_public, col.user_id, " +
+                "u.collection_id , u.user_id " +
+                "FROM collections col " +
+                "JOIN user_collections u ON col.id = u.collection_id " +
+                "WHERE u.user_id = ?";
+
+        return jdbcTemplate.query(query, new Object[]{user_id}, (rs, rowNum) -> {
+
+
+            CardCollection cardCollection = CardCollection.builder()
+                    .id(rs.getInt("collection_id"))
+                    .title(rs.getString("title"))
+                    .description(rs.getString("description"))
+                    .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                    .isPublic(rs.getBoolean("is_public"))
+                    .build();
+
+            return cardCollection;
+        });
+    }
+
+    @Override
+    public int deleteOtherCollectionById(Integer collection_id) {
+        String deleteQuery = "DELETE FROM user_collections WHERE collection_id=?";
+        return jdbcTemplate.update(deleteQuery, collection_id);
+    }
 }
 

@@ -61,7 +61,7 @@ public class CollectionController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/save/{id}")
+    @GetMapping("/saved/{id}")
     public ResponseEntity<?> saveOtherCollection(@PathVariable Integer id){
         CardCollectionResponse response = collectionService.saveOtherCollection(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -73,5 +73,19 @@ public class CollectionController {
         List<CardCollectionResponse> response = collectionService.findCollectionByTitle(title);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @GetMapping("/saved")
+    public ResponseEntity<?> getOtherCollection(){
+        List<CardCollectionResponse> response = collectionService.getOtherSavedCollections();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/saved/{collection_id}")
+    public ResponseEntity<?> deleteOtherCollection(@PathVariable Integer collection_id){
+       collectionService.deleteOtherSavedCollection(collection_id);
+        return ResponseEntity.status(HttpStatus.OK).body("Your saved collection with ID " +
+                collection_id + " was removed");
+    }
+
 
 }

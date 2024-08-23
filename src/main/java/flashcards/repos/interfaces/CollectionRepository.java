@@ -23,4 +23,8 @@ public interface CollectionRepository {
     int saveOtherCollection(Integer collection_id, Integer user_id);
 
     List<CardCollection> findByTitle(String titleWord);
+
+    List<CardCollection> getUserOtherCollection(Integer user_id);
+
+    int deleteOtherCollectionById(Integer collection_id);
 }

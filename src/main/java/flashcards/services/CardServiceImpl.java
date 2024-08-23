@@ -54,11 +54,17 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public CardResponse getCardById(Integer id) {
-        Optional<Card> cardOpt = cardRepository.findById(id);
-            if (!cardOpt.isPresent()) {
-                //throws an exception
-            }
-        return CardMapper.toResponse(cardOpt.get());
+        Card card = cardRepository.findById(id).orElseThrow(
+                () -> new CardNotFoundException("Card with ID " + id + " not found"));
+
+        /*
+        User loggedUser = userService.getLoggedUser();
+        if(!card.getCardCollection().isPublic() ||card.getUser().getId() != loggedUser.getId()) {
+            throw new AccessDeniedException("This collection is private");
+        }*/
+
+        card.setHashtags(hashtagRepository.findAllHashtags(id));
+        return CardMapper.toResponse(card);
     }
 
     @Override

@@ -28,4 +28,8 @@ public interface CollectionService {
     CardCollectionResponse saveOtherCollection(Integer collection_id);
 
     List<CardCollectionResponse> findCollectionByTitle(String title);
+
+    List<CardCollectionResponse> getOtherSavedCollections();
+
+    void deleteOtherSavedCollection(Integer collection_id);
 }
