@@ -1,4 +1,4 @@
-package flashcards;
+package flashcards.services;
 
 import flashcards.entities.User;
 import flashcards.exceptions.customexceptions.UserAlreadyExistsException;

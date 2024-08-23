@@ -1,4 +1,4 @@
-package flashcards;
+package flashcards.services;
 
 import flashcards.entities.CardCollection;
 import flashcards.entities.User;
