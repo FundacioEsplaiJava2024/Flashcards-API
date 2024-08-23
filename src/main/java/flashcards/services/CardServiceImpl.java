@@ -29,7 +29,7 @@ public class CardServiceImpl implements CardService {
     private final HashtagRepository hashtagRepository;
 
     @Override
-    public CardResponse addCard(String front, String backside, Integer collection_id, List<String> hashtags) {
+    public Card addCard(String front, String backside, Integer collection_id, List<String> hashtags) {
         User loggedUser = userService.getLoggedUser();
         CardCollection cardCollection = collectionService.getCollectionByIdForCards(collection_id);
 
@@ -44,31 +44,28 @@ public class CardServiceImpl implements CardService {
 
         Integer cardId = cardRepository.addCard(card);
 
-
+        card.setId(cardId);
         if(hashtags != null) {
             card.setHashtags(hashtags);
             hashtags.forEach(hashtag -> hashtagRepository.addHashtag(cardId, hashtag));
         }
-        return CardMapper.toResponse(card);
+        return card;
     }
 
     @Override
-    public CardResponse getCardById(Integer id) {
+    public Card getCardById(Integer id) {
         Card card = cardRepository.findById(id).orElseThrow(
                 () -> new CardNotFoundException("Card with ID " + id + " not found"));
 
-        /*
-        User loggedUser = userService.getLoggedUser();
-        if(!card.getCardCollection().isPublic() ||card.getUser().getId() != loggedUser.getId()) {
-            throw new AccessDeniedException("This collection is private");
-        }*/
-
-        card.setHashtags(hashtagRepository.findAllHashtags(id));
-        return CardMapper.toResponse(card);
+        List<String> hashtags = hashtagRepository.findAllHashtags(id);
+        if(hashtags != null) {
+            card.setHashtags(hashtags);
+        }
+        return card;
     }
 
     @Override
-    public void deleteCard(Integer id) {
+    public String deleteCard(Integer id) {
 
         Card card = cardRepository.findById(id).orElseThrow(
                 () -> new CardNotFoundException("Card with ID " + id + " not found"));
@@ -80,10 +77,12 @@ public class CardServiceImpl implements CardService {
         }
         cardRepository.deleteById(id);
 
+        return "Card with ID " + id + " was deleted successfully";
+
     }
 
     @Override
-    public CardResponse updateCard(String frontside, String backside, Integer id) {
+    public Card updateCard(String frontside, String backside, Integer id) {
 
         Card card = cardRepository.findById(id).orElseThrow(
                 () -> new CardNotFoundException("Card with ID " + id + " not found"));
@@ -116,30 +115,30 @@ public class CardServiceImpl implements CardService {
         }
         //exception when the title is null
 
-        return CardMapper.toResponse(updatedCard.get());
+        return updatedCard.get();
     }
 
     @Override
-    public List<CardResponse> getAllCards() {
+    public List<Card> getAllCards() {
         User loggedUser = userService.getLoggedUser();
         List<Card> cards =  cardRepository.findAll(loggedUser.getId());
-        return CardMapper.toResponseList(cards);
+        return cards;
     }
 
     @Override
-    public List<CardResponse> getAllCardsByCollection(Integer collection_id) {
+    public List<Card> getAllCardsByCollection(Integer collection_id) {
         User loggedUser = userService.getLoggedUser();
         List<Card> cards = cardRepository.findAllByCollection(collection_id);
 
         if(!cards.get(0).getCardCollection().isPublic() || cards.get(0).getUser().getId() != loggedUser.getId()) {
             throw new AccessDeniedException("This collection is private");
         }
-        return CardMapper.toResponseList(cards);
+        return cards;
     }
 
     //change favourite
     @Override
-    public CardResponse changeFavourite(Integer id){
+    public Card changeFavourite(Integer id){
         Card card = cardRepository.findById(id).orElseThrow(
                 () -> new CardNotFoundException("Card with ID " + id + " not found"));
         User loggedUser = userService.getLoggedUser();
@@ -155,25 +154,25 @@ public class CardServiceImpl implements CardService {
         }
 
         Optional<Card> cardChanged = cardRepository.changeFavourite(favouriteCard, id);
-        return CardMapper.toResponse(cardChanged.get());
+        return cardChanged.get();
     }
 
     // random cards
     @Override
-    public List<CardResponse> getRandomCards(){
+    public List<Card> getRandomCards(){
         List<Card> randomCards = cardRepository.getRandomCards();
-        return CardMapper.toResponseList(randomCards);
+        return randomCards;
     }
 
     @Override
-    public List<CardResponse> getAllFavourite(){
+    public List<Card> getAllFavourite(){
         User loggedUser = userService.getLoggedUser();
         List<Card> favouriteCards = cardRepository.findAllFavourite(loggedUser.getId());
-        return CardMapper.toResponseList(favouriteCards);
+        return favouriteCards;
     }
 
     @Override
-    public List<CardResponse> getCardsByHashtag(String hashtag){
+    public List<Card> getCardsByHashtag(String hashtag){
         User loggedUser = userService.getLoggedUser();
         List<Integer> cardIdListWithHashtag = hashtagRepository.findAll(hashtag);
         List<Card> cards = new ArrayList<>();
@@ -185,11 +184,11 @@ public class CardServiceImpl implements CardService {
             }
         }
 
-        return  CardMapper.toResponseList(cards);
+        return  cards;
     }
 
     @Override
-    public CardResponse addHashtag(List<String> hashtag, Integer card_id){
+    public Card addHashtag(List<String> hashtag, Integer card_id){
         Card card = cardRepository.findById(card_id).orElseThrow(
                 () -> new CardNotFoundException("Card with ID " + card_id + " not found"));
 
@@ -203,12 +202,12 @@ public class CardServiceImpl implements CardService {
             hashtagRepository.addHashtag(card_id, hashtagItem);
         });
 
-        return CardMapper.toResponse(card);
+        return card;
     }
 
 
     @Override
-    public void deleteHashtag(Integer card_id, String hashtag){
+    public String deleteHashtag(Integer card_id, String hashtag){
 
         Card card = cardRepository.findById(card_id).orElseThrow(
                 () -> new CardNotFoundException("Card with ID " + card_id + " not found"));
@@ -220,5 +219,6 @@ public class CardServiceImpl implements CardService {
         }
 
         hashtagRepository.deleteHashtag(card_id, hashtag);
+        return "Hashtag " + hashtag + " for card with ID " + card_id + " was removed successfully";
     }
 }

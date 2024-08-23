@@ -35,21 +35,23 @@ public class UserServiceImpl implements UserService {
                 .registerDate(LocalDateTime.now())
                 .enabled(false)
                 .build();
-        userRepository.addUser(user);
 
+        Integer user_id = userRepository.addUser(user);
+
+        user.setId(user_id);
         return UserMapper.toResponse(user);
 
     }
 
     @Override
-    public TokenResponse login(String email, String password) {
+    public String login(String email, String password) {
         String username = getUsername(email);
         var upAuth = new UsernamePasswordAuthenticationToken(username, password);
         var auth = authenticationManager.authenticate(upAuth);
 
         var jwtToken = jwtService.generateToken((User) auth.getPrincipal());
-        TokenResponse token = new TokenResponse(jwtToken);
-        return token;
+
+        return jwtToken;
     }
 
     private String getUsername(String email){

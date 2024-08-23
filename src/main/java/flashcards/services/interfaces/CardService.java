@@ -6,29 +6,29 @@ import flashcards.responses.CardResponse;
 import java.util.List;
 
 public interface CardService {
-    CardResponse addCard(String frontside, String backside, Integer collection_id, List<String> hashtags);
+    Card addCard(String frontside, String backside, Integer collection_id, List<String> hashtags);
 
-    CardResponse getCardById(Integer id);
+    Card getCardById(Integer id);
 
-    void deleteCard(Integer id);
+    String deleteCard(Integer id);
 
-    CardResponse updateCard(String frontside, String backside, Integer id);
+    Card updateCard(String frontside, String backside, Integer id);
 
-    List<CardResponse> getAllCards();
+    List<Card> getAllCards();
 
-    List<CardResponse> getAllCardsByCollection(Integer collection_id);
+    List<Card> getAllCardsByCollection(Integer collection_id);
 
     //change favourite
-    CardResponse changeFavourite(Integer id);
+    Card changeFavourite(Integer id);
 
     // random cards
-    List<CardResponse> getRandomCards();
+    List<Card> getRandomCards();
 
-    List<CardResponse> getAllFavourite();
+    List<Card> getAllFavourite();
 
-    List<CardResponse> getCardsByHashtag(String hashtag);
+    List<Card> getCardsByHashtag(String hashtag);
 
-    CardResponse addHashtag(List<String> hashtag, Integer card_id);
+    Card addHashtag(List<String> hashtag, Integer card_id);
 
-    void deleteHashtag(Integer card_id, String hashtag);
+    String deleteHashtag(Integer card_id, String hashtag);
 }

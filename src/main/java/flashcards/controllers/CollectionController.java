@@ -2,9 +2,11 @@ package flashcards.controllers;
 
 import flashcards.entities.CardCollection;
 
+import flashcards.mapper.CardCollectionMapper;
 import flashcards.requests.collectionRequests.CreateCollectionRequest;
 import flashcards.requests.collectionRequests.UpdateCollectionRequest;
 import flashcards.responses.CardCollectionResponse;
+import flashcards.responses.MessageResponse;
 import flashcards.services.interfaces.CollectionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,59 +26,73 @@ public class CollectionController {
     @PostMapping("")
     public ResponseEntity<?> addCollection(@Valid @RequestBody CreateCollectionRequest request){
 
-        CardCollectionResponse response = collectionService.createCollection(request.getTitle(),
+        CardCollection collection = collectionService.createCollection(request.getTitle(),
                 request.getDescription(), request.isPublic());
+        CardCollectionResponse response = CardCollectionMapper.toResponse(collection);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCollection(@PathVariable Integer id){
-        collectionService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("CardCollection deleted");
+        String message = collectionService.deleteById(id);
+        MessageResponse response = new MessageResponse(message);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editCollection(@Valid @PathVariable Integer id, @RequestBody UpdateCollectionRequest request){
 
-        CardCollectionResponse response = collectionService.updateCollection(id, request.getTitle(),
+        CardCollection collection = collectionService.updateCollection(id, request.getTitle(),
                 request.getDescription());
+
+        CardCollectionResponse response = CardCollectionMapper.toResponse(collection);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCollection(@PathVariable Integer id){
-        CardCollectionResponse response = collectionService.getCollectionById(id);
+        CardCollection collection = collectionService.getCollectionById(id);
+
+        CardCollectionResponse response = CardCollectionMapper.toResponse(collection);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("")
     public ResponseEntity<?> getAllCollections(){
-        List<CardCollectionResponse> response = collectionService.getLoggedUserAllCollections();
+        List<CardCollection> collections = collectionService.getLoggedUserAllCollections();
+        List<CardCollectionResponse> response = CardCollectionMapper.toResponseList(collections);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/random")
     public ResponseEntity<?> getRandomCollection(){
-        List<CardCollectionResponse> response = collectionService.getRandomCollections();
+        List<CardCollection> collections = collectionService.getRandomCollections();
+
+        List<CardCollectionResponse> response = CardCollectionMapper.toResponseList(collections);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/saved/{id}")
+    @PostMapping("/saved/{id}")
     public ResponseEntity<?> saveOtherCollection(@PathVariable Integer id){
-        CardCollectionResponse response = collectionService.saveOtherCollection(id);
+        CardCollection collection = collectionService.saveOtherCollection(id);
+
+        CardCollectionResponse response = CardCollectionMapper.toResponse(collection);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/title")
     public ResponseEntity<?> findCollectionByTitle(
             @RequestParam(name = "title", required = true) String title){
-        List<CardCollectionResponse> response = collectionService.findCollectionByTitle(title);
+        List<CardCollection> collections = collectionService.findCollectionByTitle(title);
+
+        List<CardCollectionResponse> response = CardCollectionMapper.toResponseList(collections);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/saved")
     public ResponseEntity<?> getOtherCollection(){
-        List<CardCollectionResponse> response = collectionService.getOtherSavedCollections();
+        List<CardCollection> collections = collectionService.getOtherSavedCollections();
+        List<CardCollectionResponse> response = CardCollectionMapper.toResponseList(collections);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
