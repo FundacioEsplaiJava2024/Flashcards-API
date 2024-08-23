@@ -2,6 +2,7 @@ package flashcards.controllers;
 
 import flashcards.entities.Card;
 import flashcards.requests.card.CreateCardRequest;
+import flashcards.requests.card.HashtagsRequest;
 import flashcards.requests.card.UpdateCardRequest;
 import flashcards.responses.CardResponse;
 import flashcards.services.interfaces.CardService;
@@ -88,4 +89,18 @@ public class CardController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
+
+    @PostMapping("/{card_id}/hashtag")
+    public ResponseEntity<?> addHashtag(@RequestBody HashtagsRequest request, @PathVariable Integer card_id){
+        CardResponse response = cardService.addHashtag(request.getHashtags(), card_id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @DeleteMapping("/{card_id}/hashtag")
+    public ResponseEntity<?> deleteHashtag(@PathVariable Integer card_id,
+                                           @RequestParam(name = "hashtag", required = true) String hashtag){
+        cardService.deleteHashtag(card_id, hashtag);
+        return ResponseEntity.status(HttpStatus.OK).body("Hashtag for card with ID " + card_id + " was deleted");
+    }
+
 }

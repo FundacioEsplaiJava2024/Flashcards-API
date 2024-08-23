@@ -2,7 +2,6 @@ package flashcards.repos;
 
 import flashcards.repos.interfaces.HashtagRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +24,11 @@ public class HashtagRepositoryJdbc implements HashtagRepository {
         String selectQuery = "SELECT card_id FROM hashtags WHERE hashtag=?";
         return jdbcTemplate.queryForList(selectQuery, Integer.class , hashtag );
     }
+
+    @Override
+    public int deleteHashtag(Integer card_id, String hashtag) {
+        String deleteQuery = "DELETE FROM hashtags WHERE card_id=? AND hashtag=?";
+        return jdbcTemplate.update(deleteQuery, card_id, hashtag);
+    }
+
 }
