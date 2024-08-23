@@ -55,4 +55,16 @@ public class CollectionController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/random")
+    public ResponseEntity<?> getRandomCollection(){
+        List<CardCollectionResponse> response = collectionService.getRandomCollections();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/save/{id}")
+    public ResponseEntity<?> saveOtherCollection(@PathVariable Integer id){
+        CardCollectionResponse response = collectionService.saveOtherCollection(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 }
