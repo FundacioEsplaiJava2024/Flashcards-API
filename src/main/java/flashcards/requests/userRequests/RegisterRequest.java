@@ -9,15 +9,15 @@ import lombok.Data;
 public class RegisterRequest {
 
 
-    @NotBlank
+    @NotBlank(message = "Please provide a valid email address")
     @Size(min = 3, max = 20)
     private String username;
 
-    @Email
-    @NotBlank
+    @Email(message = "Please provide a valid email address")
+    @NotBlank(message = "Email is required")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "Password is required")
     @Size(min = 8)
     private String password;
 }
