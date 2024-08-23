@@ -29,7 +29,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public Card addCard(String front, String backside, Integer collection_id, List<String> hashtags) {
         User loggedUser = userService.getLoggedUser();
-        CardCollection cardCollection = collectionService.getCollectionByIdForCards(collection_id);
+        CardCollection cardCollection = collectionService.getCollectionById(collection_id);
 
         Card card = Card.builder()
                 .front(front)
@@ -49,6 +49,8 @@ public class CardServiceImpl implements CardService {
         }
         return card;
     }
+
+
 
     @Override
     public Card getCardById(Integer id) {

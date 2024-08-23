@@ -133,21 +133,6 @@ public class CollectionServiceImpl implements CollectionService {
 
 
     @Override
-    public CardCollection getCollectionByIdForCards(Integer id){
-
-        CardCollection collection = collectionRepository.findById(id).orElseThrow(
-                () -> new CollectionNotFoundException("Collection with ID " + id + " not found"));
-
-        User loggedUser = userService.getLoggedUser();
-
-        if(collection.getUser().getId() != loggedUser.getId()) {
-            throw new AccessDeniedException("You do not have permission to access this collection.");
-        }
-
-        return collection;
-    }
-
-    @Override
     public CardCollection changePublicStatus(Integer id, boolean isPublic){
 
         CardCollection collection = collectionRepository.findById(id).orElseThrow(
