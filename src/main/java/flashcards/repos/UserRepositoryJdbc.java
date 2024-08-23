@@ -3,6 +3,7 @@ package flashcards.repos;
 import flashcards.entities.User;
 import flashcards.repos.interfaces.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -21,7 +22,8 @@ public class UserRepositoryJdbc implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
     @Override
     public User findByUsername(String username) {
-        String selectByUsernameQuery = "select * from users where username = ?";
+        String selectByUsernameQuery = "SELECT * FROM users WHERE username = ?";
+
         return jdbcTemplate.queryForObject(selectByUsernameQuery
                 , BeanPropertyRowMapper.newInstance(User.class), username);
     }
@@ -53,9 +55,14 @@ public class UserRepositoryJdbc implements UserRepository {
                         new BeanPropertyRowMapper<User>(User.class)));
     }
 
-    public User findByEmail(String email) {
-        String selectByEmailQuery = "select username from users where email = ?";
-        return jdbcTemplate.queryForObject(selectByEmailQuery
-                , BeanPropertyRowMapper.newInstance(User.class), email);
+    @Override
+    public Optional<User> findByEmail(String email) {
+        String selectByEmailQuery = "SELECT id, username, email, password, register_date, is_enabled FROM users WHERE email = ?";
+        try {
+            User user = jdbcTemplate.queryForObject(selectByEmailQuery, BeanPropertyRowMapper.newInstance(User.class), email);
+            return Optional.of(user);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 }
