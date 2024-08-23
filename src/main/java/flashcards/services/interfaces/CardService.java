@@ -27,4 +27,8 @@ public interface CardService {
     List<CardResponse> getAllFavourite();
 
     List<CardResponse> getCardsByHashtag(String hashtag);
+
+    CardResponse addHashtag(List<String> hashtag, Integer card_id);
+
+    void deleteHashtag(Integer card_id, String hashtag);
 }

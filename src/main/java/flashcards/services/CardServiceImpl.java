@@ -5,7 +5,6 @@ import flashcards.entities.CardCollection;
 import flashcards.entities.User;
 import flashcards.exceptions.AccessDeniedException;
 import flashcards.exceptions.CardNotFoundException;
-import flashcards.exceptions.CollectionNotFoundException;
 import flashcards.mapper.CardMapper;
 import flashcards.repos.interfaces.CardRepository;
 import flashcards.repos.interfaces.HashtagRepository;
@@ -181,5 +180,39 @@ public class CardServiceImpl implements CardService {
         }
 
         return  CardMapper.toResponseList(cards);
+    }
+
+    @Override
+    public CardResponse addHashtag(List<String> hashtag, Integer card_id){
+        Card card = cardRepository.findById(card_id).orElseThrow(
+                () -> new CardNotFoundException("Card with ID " + card_id + " not found"));
+
+        User loggedUser = userService.getLoggedUser();
+
+        if(card.getUser().getId() != loggedUser.getId()) {
+            throw new AccessDeniedException("You do not have permission to change this card.");
+        }
+
+        hashtag.forEach(hashtagItem -> {
+            hashtagRepository.addHashtag(card_id, hashtagItem);
+        });
+
+        return CardMapper.toResponse(card);
+    }
+
+
+    @Override
+    public void deleteHashtag(Integer card_id, String hashtag){
+
+        Card card = cardRepository.findById(card_id).orElseThrow(
+                () -> new CardNotFoundException("Card with ID " + card_id + " not found"));
+
+        User loggedUser = userService.getLoggedUser();
+
+        if(card.getUser().getId() != loggedUser.getId()) {
+            throw new AccessDeniedException("You do not have permission to change this card.");
+        }
+
+        hashtagRepository.deleteHashtag(card_id, hashtag);
     }
 }
