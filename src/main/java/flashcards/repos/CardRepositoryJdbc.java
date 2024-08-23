@@ -5,6 +5,7 @@ import flashcards.entities.CardCollection;
 import flashcards.entities.User;
 import flashcards.repos.interfaces.CardRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -59,30 +60,37 @@ public class CardRepositoryJdbc implements CardRepository {
                 "                JOIN users u ON c.user_id = u.id \n" +
                 "                WHERE c.id = ?";
 
-        return Optional.ofNullable(jdbcTemplate.queryForObject(query, new Object[]{card_id}, (rs, rowNum) -> {
+        try {
 
-            User user = new User();
-            user.setId(rs.getInt("user_id"));
-            user.setUsername(rs.getString("username"));
+            Card card = jdbcTemplate.queryForObject(query, new Object[]{card_id}, (rs, rowNum) -> {
+
+                User user = new User();
+                user.setId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
 
 
+                CardCollection cardCollection = new CardCollection();
+                cardCollection.setId(rs.getInt("collection_id"));
+                cardCollection.setTitle(rs.getString("collection_title"));
 
-            CardCollection cardCollection = new CardCollection();
-            cardCollection.setId(rs.getInt("collection_id"));
-            cardCollection.setTitle(rs.getString("collection_title"));
+                return Card.builder()
+                        .id(rs.getInt("card_id"))
+                        .front(rs.getString("front"))
+                        .backside(rs.getString("backside"))
+                        .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                        .favourite(rs.getBoolean("is_favourite"))
+                        .cardCollection(cardCollection)
+                        .user(user)
+                        .build();
 
-            Card card = new Card();
-            card.setId(rs.getInt("card_id"));
-            card.setFront(rs.getString("front"));
-            card.setBackside(rs.getString("backside"));
-            card.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-            card.setFavourite(rs.getBoolean("is_favourite"));
-            card.setCardCollection(cardCollection);
-            card.setUser(user);
 
-            return card;
-        }));
+            });
+            return Optional.ofNullable(card);
+        } catch (EmptyResultDataAccessException ex) {
+            return Optional.empty();
+        }
     }
+
 
 
 

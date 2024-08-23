@@ -4,6 +4,8 @@ import flashcards.entities.Card;
 import flashcards.entities.CardCollection;
 import flashcards.entities.User;
 import flashcards.exceptions.AccessDeniedException;
+import flashcards.exceptions.CardNotFoundException;
+import flashcards.exceptions.CollectionNotFoundException;
 import flashcards.mapper.CardMapper;
 import flashcards.repos.interfaces.CardRepository;
 import flashcards.repos.interfaces.HashtagRepository;
@@ -62,12 +64,13 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void deleteCard(Integer id) {
-        Optional<Card> cardOpt = cardRepository.findById(id);
+
+        Card card = cardRepository.findById(id).orElseThrow(
+                () -> new CardNotFoundException("Card with ID " + id + " not found"));
+
         User loggedUser = userService.getLoggedUser();
-        if(!cardOpt.isPresent()){
-            //throw an exception
-        }
-        if(cardOpt.get().getUser().getId() != loggedUser.getId()) {
+
+        if(card.getUser().getId() != loggedUser.getId()) {
             throw new AccessDeniedException("You do not have permission to delete this card.");
         }
         cardRepository.deleteById(id);
@@ -77,35 +80,34 @@ public class CardServiceImpl implements CardService {
     @Override
     public CardResponse updateCard(String frontside, String backside, Integer id) {
 
-        Optional<Card> cardOpt = cardRepository.findById(id);
+        Card card = cardRepository.findById(id).orElseThrow(
+                () -> new CardNotFoundException("Card with ID " + id + " not found"));
         User loggedUser = userService.getLoggedUser();
-        if(!cardOpt.isPresent()){
-            //throw an exception if the card wasn't found
-        }
-        if(cardOpt.get().getUser().getId() != loggedUser.getId()) {
+
+        if(card.getUser().getId() != loggedUser.getId()) {
             throw new AccessDeniedException("You do not have permission to change this card.");
         }
 
-        Optional<Card> updatedCard = cardOpt;
+        Optional<Card> updatedCard = Optional.of(card);
         //to change frontside and backside
         if(backside != null && frontside != null && !backside.trim().isEmpty() && !frontside.trim().isEmpty()) {
-            cardOpt.get().setFront(frontside);
-            cardOpt.get().setBackside(backside);
-            updatedCard = cardRepository.updateCard(cardOpt.get(), id);
+            card.setFront(frontside);
+            card.setBackside(backside);
+            updatedCard = cardRepository.updateCard(card, id);
         }
         //to change description
 
         // do in case backside isn't null and not empty
         else if(backside != null && !backside.trim().isEmpty()){
-            cardOpt.get().setBackside(backside);
-            updatedCard = cardRepository.updateCard(cardOpt.get(), id);
+            card.setBackside(backside);
+            updatedCard = cardRepository.updateCard(card, id);
         }
 
         //to change frontside
         // do in case frinte isn't null and not empty
         else if(frontside != null && !frontside.trim().isEmpty()) {
-           cardOpt.get().setFront(frontside);
-            updatedCard = cardRepository.updateCard(cardOpt.get(), id);
+           card.setFront(frontside);
+            updatedCard = cardRepository.updateCard(card, id);
         }
         //exception when the title is null
 
@@ -133,23 +135,22 @@ public class CardServiceImpl implements CardService {
     //change favourite
     @Override
     public CardResponse changeFavourite(Integer id){
+        Card card = cardRepository.findById(id).orElseThrow(
+                () -> new CardNotFoundException("Card with ID " + id + " not found"));
         User loggedUser = userService.getLoggedUser();
-        Optional<Card> cardOpt = cardRepository.findById(id);
-        if(!cardOpt.isPresent()){
-            //throw an exception if the card wasn't found
-        }
+
         boolean favouriteCard;
 
         //id favourite is false, then change it to true
-        if(!cardOpt.get().isFavourite()){
+        if(!card.isFavourite()){
             favouriteCard = true;
         }else{
             //if favourite is true, change it to false
             favouriteCard = false;
         }
 
-        Optional<Card> card = cardRepository.changeFavourite(favouriteCard, id);
-        return CardMapper.toResponse(card.get());
+        Optional<Card> cardChanged = cardRepository.changeFavourite(favouriteCard, id);
+        return CardMapper.toResponse(cardChanged.get());
     }
 
     // random cards
@@ -180,6 +181,5 @@ public class CardServiceImpl implements CardService {
         }
 
         return  CardMapper.toResponseList(cards);
-
     }
 }
