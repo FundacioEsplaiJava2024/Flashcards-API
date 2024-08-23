@@ -31,4 +31,10 @@ public class HashtagRepositoryJdbc implements HashtagRepository {
         return jdbcTemplate.update(deleteQuery, card_id, hashtag);
     }
 
+    @Override
+    public List<String> findAllHashtags(Integer card_id) {
+        String selectQuery = "SELECT hashtag FROM hashtags WHERE card_id=?";
+        return jdbcTemplate.queryForList(selectQuery, String.class , card_id );
+    }
+
 }

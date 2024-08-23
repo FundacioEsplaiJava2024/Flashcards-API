@@ -195,4 +195,17 @@ public class CollectionServiceImpl implements CollectionService {
         return CardCollectionMapper.toResponseList(collections);
     }
 
+    @Override
+    public List<CardCollectionResponse> getOtherSavedCollections(){
+        User user = userService.getLoggedUser();
+        List<CardCollection> collections = collectionRepository.getUserOtherCollection(user.getId());
+
+        return CardCollectionMapper.toResponseList(collections);
+    }
+
+    @Override
+    public void deleteOtherSavedCollection(Integer collection_id){
+        collectionRepository.deleteOtherCollectionById(collection_id);
+    }
+
 }

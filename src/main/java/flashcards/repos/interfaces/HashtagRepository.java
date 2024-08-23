@@ -8,4 +8,6 @@ public interface HashtagRepository {
     List<Integer> findAll(String hashtag);
 
     int deleteHashtag(Integer card_id, String hashtag);
+
+    List<String> findAllHashtags(Integer card_id);
 }

@@ -53,7 +53,7 @@ public class CardRepositoryJdbc implements CardRepository {
     @Override
     public Optional<Card> findById(Integer card_id) {
         String query = "SELECT c.id AS card_id, c.front, c.backside, c.created_at, c.is_favourite, \n" +
-                "                col.id AS collection_id, col.title AS collection_title,\n" +
+                "                col.id AS collection_id, col.title AS collection_title, col.is_public,\n" +
                 "                u.id AS user_id, u.username\n" +
                 "                FROM cards c \n" +
                 "                JOIN collections col ON c.collection_id = col.id \n" +
@@ -72,6 +72,7 @@ public class CardRepositoryJdbc implements CardRepository {
                 CardCollection cardCollection = new CardCollection();
                 cardCollection.setId(rs.getInt("collection_id"));
                 cardCollection.setTitle(rs.getString("collection_title"));
+                cardCollection.setPublic((rs.getBoolean("col.is_public")));
 
                 return Card.builder()
                         .id(rs.getInt("card_id"))
