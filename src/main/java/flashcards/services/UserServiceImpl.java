@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
             User user = userRepository.findByEmail(email);
 
             try {
-                if(user != null){
+                if(user == null){
                     throw new BadCredentialsException("Invalid email or password, " +
                             "make sure you are registered and your account was verified");
                 }
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
                 return jwtToken;
             } catch (AuthenticationException e) {
-                throw new BadCredentialsException("Invalid email or password" +
+                throw new BadCredentialsException("Invalid email or password, " +
                         "make sure you are registered and your account was verified");
             }
 
