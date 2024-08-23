@@ -1,5 +1,6 @@
 package flashcards.exceptions;
 
+import flashcards.exceptions.customexceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -51,6 +52,19 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = ErrorResponse.builder()
                 .httpStatus(HttpStatus.NOT_FOUND)
+                .message(ex.getMessage())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(error,error.getHttpStatus());
+    }
+
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<Object> handleUserAlreadyExistsException(Exception ex){
+
+        ErrorResponse error = ErrorResponse.builder()
+                .httpStatus(HttpStatus.CONFLICT)
                 .message(ex.getMessage())
                 .createdAt(LocalDateTime.now())
                 .build();

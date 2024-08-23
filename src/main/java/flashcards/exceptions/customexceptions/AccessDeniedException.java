@@ -1,4 +1,4 @@
-package flashcards.exceptions;
+package flashcards.exceptions.customexceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
