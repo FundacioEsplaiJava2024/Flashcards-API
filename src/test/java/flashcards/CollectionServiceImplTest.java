@@ -76,7 +76,7 @@ public class CollectionServiceImplTest {
 
 
     @Test
-    public void testCreateDefaultCollection_Success() {
+    public void testCreateDefaultCollectionSuccess() {
         when(userService.getUserByUsername("testUser")).thenReturn(user);
         collectionService.createDefaultCollection("testUser");
 
@@ -84,7 +84,7 @@ public class CollectionServiceImplTest {
     }
 
     @Test
-    public void testDeleteById_Success() {
+    public void testDeleteByIdSuccess() {
         when(collectionRepository.findById(1)).thenReturn(Optional.of(cardCollection));
         when(userService.getLoggedUser()).thenReturn(user);
 
