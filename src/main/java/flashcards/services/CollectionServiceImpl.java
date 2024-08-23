@@ -24,7 +24,7 @@ public class CollectionServiceImpl implements CollectionService {
 
 
     @Override
-    public CardCollectionResponse createCollection(String title, String description, boolean isPublic){
+    public CardCollection createCollection(String title, String description, boolean isPublic){
         // get current logged user
         User loggedUser = userService.getLoggedUser();
 
@@ -37,7 +37,7 @@ public class CollectionServiceImpl implements CollectionService {
                 .build();
         collectionRepository.addCollection(cardCollection);
 
-        return CardCollectionMapper.toResponse(cardCollection);
+        return cardCollection;
 
     }
 
@@ -71,7 +71,7 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public CardCollectionResponse updateCollection(Integer id, String title, String description) {
+    public CardCollection updateCollection(Integer id, String title, String description) {
 
         CardCollection collection = collectionRepository.findById(id).orElseThrow(
                 () -> new CollectionNotFoundException("Collection with ID " + id + " not found"));
@@ -107,12 +107,12 @@ public class CollectionServiceImpl implements CollectionService {
             }
             //exception when the title is null
 
-        return CardCollectionMapper.toResponse(updatedCollection.get());
+        return updatedCollection.get();
 
     }
 
     @Override
-    public CardCollectionResponse getCollectionById(Integer id){
+    public CardCollection getCollectionById(Integer id){
 
         CardCollection collection = collectionRepository.findById(id).orElseThrow(
                 () -> new CollectionNotFoundException("Collection with ID " + id + " not found"));
@@ -122,14 +122,14 @@ public class CollectionServiceImpl implements CollectionService {
         if( !collection.isPublic() && collection.getUser().getId() != loggedUser.getId()) {
             throw new AccessDeniedException("You do not have permission to access this collection.");
         }
-        return CardCollectionMapper.toResponse(collection);
+        return collection;
     }
 
     @Override
-    public List<CardCollectionResponse> getLoggedUserAllCollections(){
+    public List<CardCollection> getLoggedUserAllCollections(){
         User loggedUser = userService.getLoggedUser();
         List<CardCollection> collections = collectionRepository.findAll(loggedUser.getId());
-        return CardCollectionMapper.toResponseList(collections);
+        return collections;
     }
 
 
@@ -149,7 +149,7 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public CardCollectionResponse changePublicStatus(Integer id, boolean isPublic){
+    public CardCollection changePublicStatus(Integer id, boolean isPublic){
 
         CardCollection collection = collectionRepository.findById(id).orElseThrow(
                 () -> new CollectionNotFoundException("Collection with ID " + id + " not found"));
@@ -163,44 +163,44 @@ public class CollectionServiceImpl implements CollectionService {
 
         CardCollection cardCollection = collectionRepository.changePublicStatus(id, collection);
 
-        return CardCollectionMapper.toResponse(cardCollection);
+        return cardCollection;
 
     }
 
     @Override
-    public List<CardCollectionResponse> getRandomCollections(){
+    public List<CardCollection> getRandomCollections(){
         User loggedUser = userService.getLoggedUser();
-        List<CardCollection> cards = collectionRepository.getRandomCollections(loggedUser.getId());
-        return CardCollectionMapper.toResponseList(cards);
+        List<CardCollection> collections = collectionRepository.getRandomCollections(loggedUser.getId());
+        return collections;
     }
 
     @Override
-    public CardCollectionResponse saveOtherCollection(Integer collection_id){
+    public CardCollection saveOtherCollection(Integer collection_id){
         User loggedUser = userService.getLoggedUser();
         CardCollection collection = collectionRepository.findById(collection_id).orElseThrow(
                 () -> new CollectionNotFoundException("Collection with ID " + collection_id + " not found"));
                 collectionRepository.saveOtherCollection(collection_id, loggedUser.getId());
 
-        return CardCollectionMapper.toResponse(collection);
+        return collection;
     }
 
     @Override
-    public List<CardCollectionResponse> findCollectionByTitle(String title){
+    public List<CardCollection> findCollectionByTitle(String title){
         List<CardCollection> collections = collectionRepository.findByTitle(title);
 
         if(collections.isEmpty()){
             throw new CollectionNotFoundException("There are no collections");
         }
 
-        return CardCollectionMapper.toResponseList(collections);
+        return collections;
     }
 
     @Override
-    public List<CardCollectionResponse> getOtherSavedCollections(){
+    public List<CardCollection> getOtherSavedCollections(){
         User user = userService.getLoggedUser();
         List<CardCollection> collections = collectionRepository.getUserOtherCollection(user.getId());
 
-        return CardCollectionMapper.toResponseList(collections);
+        return collections;
     }
 
     @Override

@@ -7,29 +7,29 @@ import java.util.List;
 
 public interface CollectionService {
 
-    CardCollectionResponse createCollection(String title, String description, boolean isPublic);
+    CardCollection createCollection(String title, String description, boolean isPublic);
 
     // creating a 'default' cardCollection for all those cards that doesn't have any specified cardCollection
     void createDefaultCollection(String username);
 
     void deleteById(Integer id);
 
-    CardCollectionResponse updateCollection(Integer id, String title, String description);
+    CardCollection updateCollection(Integer id, String title, String description);
 
-    CardCollectionResponse getCollectionById(Integer id);
+    CardCollection getCollectionById(Integer id);
 
-    List<CardCollectionResponse> getLoggedUserAllCollections();
+    List<CardCollection> getLoggedUserAllCollections();
     CardCollection getCollectionByIdForCards(Integer id);
 
-    CardCollectionResponse changePublicStatus(Integer id, boolean isPublic);
+    CardCollection changePublicStatus(Integer id, boolean isPublic);
 
-    List<CardCollectionResponse> getRandomCollections();
+    List<CardCollection> getRandomCollections();
 
-    CardCollectionResponse saveOtherCollection(Integer collection_id);
+    CardCollection saveOtherCollection(Integer collection_id);
 
-    List<CardCollectionResponse> findCollectionByTitle(String title);
+    List<CardCollection> findCollectionByTitle(String title);
 
-    List<CardCollectionResponse> getOtherSavedCollections();
+    List<CardCollection> getOtherSavedCollections();
 
     void deleteOtherSavedCollection(Integer collection_id);
 }
