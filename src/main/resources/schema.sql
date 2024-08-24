@@ -33,12 +33,12 @@ CREATE TABLE IF NOT EXISTS collections (
 
 -- Estructura de la tabla cards
 DROP TABLE IF EXISTS cards;
+
 CREATE TABLE IF NOT EXISTS cards (
    id int NOT NULL AUTO_INCREMENT,
    front varchar(255) NOT NULL,
    backside varchar(255) DEFAULT NULL,
    created_at datetime,
-   is_favourite BIT(1),
    collection_id int NOT NULL,
    user_id int NOT NULL,
    PRIMARY KEY (id),
@@ -48,5 +48,22 @@ CREATE TABLE IF NOT EXISTS cards (
    CONSTRAINT fk_users_card
        FOREIGN KEY (user_id)
        REFERENCES users (id)
+       ON DELETE CASCADE
+);
+
+-- Estructura de la tabla likes
+
+DROP TABLE IF EXISTS likes;
+CREATE TABLE IF NOT EXISTS likes (
+   user_id INT NOT NULL,
+   card_id INT NOT NULL,
+   PRIMARY KEY (user_id, card_id),
+   CONSTRAINT fk_user_card_user
+       FOREIGN KEY (user_id)
+       REFERENCES users (id)
+       ON DELETE CASCADE,
+   CONSTRAINT fk_user_card_card
+       FOREIGN KEY (card_id)
+       REFERENCES cards (id)
        ON DELETE CASCADE
 );
