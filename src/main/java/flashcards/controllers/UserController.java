@@ -1,5 +1,7 @@
 package flashcards.controllers;
 
+import flashcards.entities.User;
+import flashcards.mapper.UserMapper;
 import flashcards.requests.userRequests.LoginRequest;
 import flashcards.requests.userRequests.RegisterRequest;
 import flashcards.responses.TokenResponse;
@@ -23,9 +25,10 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request){
 
-        UserRegisterResponse response = userService.createUser(request.getUsername(),
+        User user = userService.createUser(request.getUsername(),
                 request.getEmail(), request.getPassword());
-        //collectionService.createDefaultCollection(response.getUsername());
+        UserRegisterResponse response = UserMapper.toResponse(user);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }

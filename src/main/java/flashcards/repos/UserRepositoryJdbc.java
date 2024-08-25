@@ -3,6 +3,7 @@ package flashcards.repos;
 import flashcards.entities.User;
 import flashcards.repos.interfaces.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -21,9 +22,16 @@ public class UserRepositoryJdbc implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
     @Override
     public User findByUsername(String username) {
-        String selectByUsernameQuery = "select * from users where username = ?";
-        return jdbcTemplate.queryForObject(selectByUsernameQuery
-                , BeanPropertyRowMapper.newInstance(User.class), username);
+        String selectByUsernameQuery = "SELECT * FROM users WHERE username = ?";
+        try {
+            return jdbcTemplate.queryForObject(
+                    selectByUsernameQuery,
+                    BeanPropertyRowMapper.newInstance(User.class),
+                    username
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override
@@ -53,9 +61,17 @@ public class UserRepositoryJdbc implements UserRepository {
                         new BeanPropertyRowMapper<User>(User.class)));
     }
 
+    @Override
     public User findByEmail(String email) {
-        String selectByEmailQuery = "select username from users where email = ?";
-        return jdbcTemplate.queryForObject(selectByEmailQuery
-                , BeanPropertyRowMapper.newInstance(User.class), email);
+        String selectByUsernameQuery = "SELECT * FROM users WHERE email = ?";
+        try {
+            return jdbcTemplate.queryForObject(
+                    selectByUsernameQuery,
+                    BeanPropertyRowMapper.newInstance(User.class),
+                    email
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 }

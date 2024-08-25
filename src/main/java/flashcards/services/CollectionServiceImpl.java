@@ -2,11 +2,9 @@ package flashcards.services;
 
 import flashcards.entities.CardCollection;
 import flashcards.entities.User;
-import flashcards.exceptions.AccessDeniedException;
-import flashcards.exceptions.CollectionNotFoundException;
-import flashcards.mapper.CardCollectionMapper;
+import flashcards.exceptions.customexceptions.AccessDeniedException;
+import flashcards.exceptions.customexceptions.CollectionNotFoundException;
 import flashcards.repos.interfaces.CollectionRepository;
-import flashcards.responses.CardCollectionResponse;
 import flashcards.services.interfaces.CollectionService;
 import flashcards.services.interfaces.UserService;
 import lombok.AllArgsConstructor;
