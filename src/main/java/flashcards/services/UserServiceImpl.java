@@ -53,8 +53,8 @@ public class UserServiceImpl implements UserService {
 
         return jwtToken;
     }
-
-    private String getUsername(String email){
+    @Override
+    public String getUsername(String email){
         User user =  userRepository.findByEmail(email);
         return user.getUsername();
     }
