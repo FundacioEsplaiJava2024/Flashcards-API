@@ -141,7 +141,11 @@ public class CardServiceImpl implements CardService {
     public Card changeFavourite(Integer id){
         Card card = cardRepository.findById(id).orElseThrow(
                 () -> new CardNotFoundException("Card with ID " + id + " not found"));
+
         User loggedUser = userService.getLoggedUser();
+        if(card.getUser().getId() != loggedUser.getId()) {
+            throw new AccessDeniedException("You can add this cad to favourite, because it's not yours.");
+        }
 
         boolean favouriteCard;
 

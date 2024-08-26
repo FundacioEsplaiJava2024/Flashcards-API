@@ -172,7 +172,6 @@ public class CardRepositoryJdbc implements CardRepository {
                 "ORDER BY RAND() LIMIT 20";
 
         return jdbcTemplate.query(query, (rs, rowNum) -> {
-            // Mapping each row to a Card object
 
             User user = User.builder()
                     .id(rs.getInt("user_id"))
@@ -207,7 +206,7 @@ public class CardRepositoryJdbc implements CardRepository {
                 "JOIN users u ON c.user_id = u.id " +
                 "WHERE c.is_favourite = TRUE AND c.user_id = ? ";
 
-        return jdbcTemplate.query(query, (rs, rowNum) -> {
+        return jdbcTemplate.query(query, new Object[]{user_id},  (rs, rowNum) -> {
 
             User user = User.builder()
                     .id(rs.getInt("user_id"))
