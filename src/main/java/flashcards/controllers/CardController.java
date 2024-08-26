@@ -38,7 +38,7 @@ public class CardController {
     public ResponseEntity<?> deleteCard(@PathVariable Integer id){
         String message = cardService.deleteCard(id);
         MessageResponse response = new MessageResponse(message);
-        return ResponseEntity.status(HttpStatus.OK).body(message);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping("/{id}")
