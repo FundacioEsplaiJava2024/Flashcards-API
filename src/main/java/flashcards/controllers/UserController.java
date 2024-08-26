@@ -38,7 +38,9 @@ public class UserController {
 
         String token = userService.login(request.getEmail(),
                 request.getPassword());
-        TokenResponse response = new TokenResponse(token);
+
+        String email = userService.getUsername(request.getEmail());
+        TokenResponse response = new TokenResponse(token, email);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
