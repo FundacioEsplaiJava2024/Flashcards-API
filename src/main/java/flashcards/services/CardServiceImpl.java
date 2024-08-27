@@ -129,10 +129,10 @@ public class CardServiceImpl implements CardService {
     public List<Card> getAllCardsByCollection(Integer collection_id) {
         User loggedUser = userService.getLoggedUser();
         List<Card> cards = cardRepository.findAllByCollection(collection_id);
-
+        /*
         if(!cards.get(0).getCardCollection().isPublic() || cards.get(0).getUser().getId() != loggedUser.getId()) {
             throw new AccessDeniedException("This collection is private");
-        }
+        }*/
         return cards;
     }
 
