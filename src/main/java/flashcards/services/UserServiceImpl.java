@@ -5,6 +5,7 @@ import flashcards.exceptions.customexceptions.UserAlreadyExistsException;
 import flashcards.repos.interfaces.UserRepository;
 import flashcards.security.JwtService;
 import flashcards.services.interfaces.UserService;
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,6 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.security.SecureRandom;
 
 import java.time.LocalDateTime;
 
@@ -72,9 +74,7 @@ public class UserServiceImpl implements UserService {
                 throw new BadCredentialsException("Invalid email or password, " +
                         "make sure you are registered and your account was verified");
             }
-
     }
-
 
     @Override
     public User getLoggedUser(){

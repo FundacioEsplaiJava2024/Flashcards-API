@@ -1,16 +1,16 @@
 spring:
   flyway:
     enabled: true
-    user: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
-    url: jdbc:mysql://localhost:3306/flashcards?createDatabaseIfNotExist=true
+    user: root
+    password: flashcards
+    url: jdbc:mysql://flashcards-db.crgqm4weayav.eu-north-1.rds.amazonaws.com:3306/flashcards?createDatabaseIfNotExist=true
     schemas: flashcards
   profiles:
     active: ${ACTIVE_PROFILE:dev}
   datasource:
-    username: ${MYSQL_USER}
-    url: jdbc:mysql://localhost:3306/flashcards?createDatabaseIfNotExist=true
-    password: ${MYSQL_PASSWORD}
+    username: root
+    password: flashcards
+    url: jdbc:mysql://flashcards-db.crgqm4weayav.eu-north-1.rds.amazonaws.com:3306/flashcards?createDatabaseIfNotExist=true
   mail:
     host: ${EMAIL_HOST}
     port: ${EMAIL_PORT}
@@ -19,16 +19,14 @@ spring:
     default-encoding: UTF-8
     properties:
       mail:
-        mime:
-          charset: UTF
         smtp:
-          writetimeout: 10000
-          connectiontimeout: 10000
-          timeout: 10000
-          auth: true
-          starttls:
-            enable: true
-            required: true
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
     verify:
       host: ${VERIFY_EMAIL_HOST}
 server:
@@ -37,3 +35,10 @@ server:
 token:
   secret.key: '8472B4B6250655367566B5970337336763979244226452948404D635166546A'
   valid.time: '86400000'
+aws:
+  access:
+    key:
+      id: ${YOUR_ACCESS_KEY_ID}
+  secret:
+    access:
+      key: ${YOUR_SECRET_ACCESS_KEY}
