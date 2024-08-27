@@ -9,26 +9,12 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import javax.sql.DataSource;
 
 @SpringBootApplication
-public class Application implements CommandLineRunner{
-	//implements CommandLineRunner
-
-	private final DataSource dataSource;
-
-	public Application(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+public class Application{
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
 
-	@Override
-	public void run(String... args) throws Exception {
-		ResourceDatabasePopulator populatorSchema = new ResourceDatabasePopulator(new ClassPathResource("schema.sql"));
-		ResourceDatabasePopulator populatorData = new ResourceDatabasePopulator(new ClassPathResource("data.sql"));
-		populatorSchema.execute(dataSource);
-		populatorData.execute(dataSource);
-	}
 
 }
 

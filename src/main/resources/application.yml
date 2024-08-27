@@ -1,19 +1,16 @@
 spring:
+  flyway:
+    enabled: true
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    url: jdbc:mysql://localhost:3306/flashcards?createDatabaseIfNotExist=true
+    schemas: flashcards
   profiles:
     active: ${ACTIVE_PROFILE:dev}
   datasource:
-    username: root
-    url: jdbc:mysql://localhost:3306/flashcards
-    password: root
-    initialization-mode: always
-    schema: classpath:schema.sql
-    data: classpath:data.sql
-    jpa:
-      hibernate:
-        ddl-auto: create
-    sql:
-      init:
-        mode: always
+    username: ${MYSQL_USER}
+    url: jdbc:mysql://localhost:3306/flashcards?createDatabaseIfNotExist=true
+    password: ${MYSQL_PASSWORD}
   mail:
     host: ${EMAIL_HOST}
     port: ${EMAIL_PORT}
