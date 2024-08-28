@@ -1,7 +1,7 @@
 -- Elimina la base de datos si ya existe y la vuelve a crear
 -- DROP DATABASE IF EXISTS flashcards;
--- CREATE DATABASE IF NOT EXISTS flashcards DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- USE flashcards;
+ CREATE DATABASE IF NOT EXISTS flashcards DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ USE flashcards;
 
 -- Estructura de la tabla users
 -- DROP TABLE IF EXISTS users;

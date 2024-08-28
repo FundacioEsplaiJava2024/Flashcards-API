@@ -3,14 +3,14 @@ spring:
     enabled: true
     user: root
     password: flashcards
-    url: jdbc:mysql://flashcards-db.crgqm4weayav.eu-north-1.rds.amazonaws.com:3306/flashcards?createDatabaseIfNotExist=true
+    url: jdbc:mysql://flashcards-app-project.crgqm4weayav.eu-north-1.rds.amazonaws.com:3306/flashcards?createDatabaseIfNotExist=true
     schemas: flashcards
   profiles:
     active: ${ACTIVE_PROFILE:dev}
   datasource:
     username: root
     password: flashcards
-    url: jdbc:mysql://flashcards-db.crgqm4weayav.eu-north-1.rds.amazonaws.com:3306/flashcards?createDatabaseIfNotExist=true
+    url: jdbc:mysql://flashcards-app-project.crgqm4weayav.eu-north-1.rds.amazonaws.com:3306/flashcards?createDatabaseIfNotExist=true
   mail:
     host: ${EMAIL_HOST}
     port: ${EMAIL_PORT}
@@ -30,7 +30,7 @@ spring:
     verify:
       host: ${VERIFY_EMAIL_HOST}
 server:
-  port: '8182'
+  port: '5000'
 
 token:
   secret.key: '8472B4B6250655367566B5970337336763979244226452948404D635166546A'
